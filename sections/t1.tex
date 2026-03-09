@@ -2,8 +2,30 @@
 % Example:
 % \lesson{1}{Mon 09 Mar 2026}{Introduction}
 
+
+
 \section{Tutoriat 1}
 
-\begin{definition}
-    Let $a$
-\end{definition}
+
+% Define colors for syntax highlighting
+
+\section*{Prolog Example: Family Tree}
+
+Below is an example of a simple Prolog program rendered directly in \LaTeX.
+
+\begin{lstlisting}[caption={Family relations in Prolog}]
+% This is a comment: defining facts
+parent(albert, bob).
+parent(albert, betsy).
+parent(albert, bill).
+
+parent(alice, bob).
+parent(alice, betsy).
+parent(alice, bill).
+
+% Defining a rule: X is a sibling of Y
+sibling(X, Y) :-
+    parent(Z, X),
+    parent(Z, Y),
+    X \= Y. % Ensure a person isn't their own sibling
+\end{lstlisting}

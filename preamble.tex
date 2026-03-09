@@ -19,6 +19,7 @@
 \usepackage{emptypage}
 \usepackage{subcaption}
 \usepackage{multicol}
+\usepackage{listings}
 \usepackage[usenames,dvipsnames]{xcolor}
 
 % \usepackage{cmbright}
@@ -278,7 +279,24 @@
 ]}{\end{tcolorbox}}
 
 
+\definecolor{commentgreen}{rgb}{0,0.6,0}
+\definecolor{keywordblue}{rgb}{0,0,0.8}
+\definecolor{stringpurple}{rgb}{0.58,0,0.82}
 
+% Setup the Prolog style
+\lstset{
+    language=Prolog,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{keywordblue}\bfseries,
+    commentstyle=\color{commentgreen}\itshape,
+    stringstyle=\color{stringpurple},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    frame=single,
+    breaklines=true,
+    showstringspaces=false
+}
 
 % figure support
 \usepackage{import}
@@ -295,4 +313,4 @@
 \pdfsuppresswarningpagegroup=1
 
 
-\author{Gilles Castel}
+\author{Vlăduț Ghiță, Raluca Ionete, Voaideș Robert}

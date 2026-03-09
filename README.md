@@ -10,12 +10,13 @@ Requirements:
 - A LaTeX distribution (TeX Live or MiKTeX)
 
 Targets:
-- `make` or `make pdf`: compile `master.tex` once into `build/`
+- `make` or `make build`: compile `master.tex` once into `build/`
 - `make watch`: watch mode (`latexmk -pvc`) for live rebuilds
-- `make clean`: remove intermediate files
-- `make distclean`: remove intermediates and `build/`
+- `make section SECTION=t1`: compile only `sections/t1.tex` through the master template
+- `make clean`: remove `build/`
 
 Output PDF is written to `build/master.pdf`.
+For section builds, output is `build/<SECTION>.pdf` (for example `build/t1.pdf`).
 
 ## Style Guide (LaTeX preset)
 
@@ -48,3 +49,21 @@ Typical workflow in VS Code:
 1. Run `make watch` in the terminal.
 2. Edit `.tex` files normally.
 3. Use the PDF viewer for preview; `latexmk` handles recompilation.
+
+## Materie
+
+### Săptămâna 1
+
+- de ce logica? la ce e utilă?
+- inducție și recursie pe formule
+- evaluări și tabele de adevăr + 1 exercițiu, să explicăm
+- 1h prolog - (baze, explicăm filozofia, cum gândești și cum funcționează prolog, sintaxa din l1) - Vlăduț
+- la prolog, vezi cum poți să faci code listing in latex
+
+#### Listă - idei
+
+- mai încolo, listă de exerciții (seminar + prolog, poate?).
+- 1/2 ex rezolvate de noi, si 2 exercitii sa le rezolve ei - **ii intrebam daca vor sa ii ajutam/verificam**
+
+
+>[!NOTE] **MARKERE**

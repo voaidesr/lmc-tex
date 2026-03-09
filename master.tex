@@ -23,13 +23,18 @@
 % \DeclareMathOperator{\im}{Im}
 \DeclareMathOperator{\md}{\vDash}
 
-\title{Course Title}
+\title{Tutoriat LMC}
 \begin{document}
     \maketitle
     \tableofcontents
 
     % start sections
-    \input{sections/t1.tex}
+    \ifdefined\OnlySection
+        \input{sections/\OnlySection.tex}
+    \else
+        \input{sections/t1.tex}
+        \input{sections/t2.tex}
+    \fi
     % end sections
 
 \end{document}

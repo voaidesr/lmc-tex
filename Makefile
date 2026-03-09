@@ -1,25 +1,24 @@
 LATEXMK ?= latexmk
 TEX := master.tex
 BUILD_DIR := build
-LATEXMK_FLAGS := -pdf -interaction=nonstopmode -file-line-error -halt-on-error -outdir=$(BUILD_DIR) -auxdir=$(BUILD_DIR)
+LATEXMK_FLAGS := -pdf -interaction=nonstopmode -file-line-error -halt-on-error -outdir=$(BUILD_DIR)
 
-.PHONY: all pdf watch clean distclean
+.PHONY: build watch section clean
 
-all: pdf
-
-pdf: $(BUILD_DIR)
+build:
+	mkdir -p $(BUILD_DIR)
 	$(LATEXMK) $(LATEXMK_FLAGS) $(TEX)
 
-watch: $(BUILD_DIR)
+watch:
+	mkdir -p $(BUILD_DIR)
 	$(LATEXMK) -pvc $(LATEXMK_FLAGS) $(TEX)
 
-clean:
-	$(LATEXMK) -c $(TEX)
-	rm -f $(BUILD_DIR)/*.bbl $(BUILD_DIR)/*.bcf $(BUILD_DIR)/*.run.xml
-
-distclean:
-	$(LATEXMK) -C $(TEX)
-	rm -rf $(BUILD_DIR)
-
-$(BUILD_DIR):
+section:
+ifndef SECTION
+	$(error Missing SECTION. Use: make section SECTION=t1)
+endif
 	mkdir -p $(BUILD_DIR)
+	$(LATEXMK) $(LATEXMK_FLAGS) -jobname=$(SECTION) -pdflatex='pdflatex %O "\\def\\OnlySection{$(SECTION)}\\input{%S}"' $(TEX)
+
+clean:
+	rm -rf $(BUILD_DIR)
