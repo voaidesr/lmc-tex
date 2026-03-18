@@ -9,7 +9,8 @@
 
 	\item Seminariile sunt destul de complexe, acoperă ok materia, iar soluțiile sunt postate pe site, așa că noi o să încercăm să lucrăm la tutoriat exerciții extra.
 
-	\item Puteți să ne scrieți oricând în privat/pe grup cu întrebări/sugestii/idei, iar noi o să încercăm să vă ajutăm și să le punem în practică. De asemenea, puteți să ne sugerați ce ați
+	\item Puteți să ne scrieți oricând în privat/pe
+	      grup cu întrebări/sugestii/idei, iar noi o să încercăm să vă ajutăm și să le punem în practică. De asemenea, puteți să ne sugerați ce ați
 	      refera să lucrăm la tutoriat.
 
 	\item O să publicăm pe GitHub tutoriatele săptămânal și o să anunțăm, prin README, ce o să facem la următorul tutoriat. De asemenea, plănuim să creăm liste de exerciții, la care să publicăm și rezolvările. Dacă o să doriți să ne uităm pe rezolvările voaste, puteți să ne ziceți.
@@ -44,7 +45,7 @@ pe scurt, presupune demonstrarea matematică a corectitudinii unui cod, lucru ca
 foarte des seminarii de logică la \href{https://ilds.ro/}{ILDS} sau \href{https://los.cs.unibuc.ro/}{LOS}, așa că dacă vreți să faceți cercetare în timpul facultății sau să vă specializați pe partea de
 verificare formală sau alte tipuri de logică, chiar aveți cu cine.
 
-\section{Logica Propozițională}
+\section{Logica Propozițională - intro}
 
 Formulele stau la baza Logicii Propoziționale și sunt principalul lucru cu care o să lucrați capitolul ăsta. Cursul menționează că ele sunt definite inductiv:
 
@@ -72,6 +73,8 @@ toate celelalte formule. În loc de un singur pas incremental, avem doi:
 	\item[\( \neg \)] putem nega formula noastră curentă pentru a obține o nouă formulă
 	\item[\( \to \)] atunci când avem două formule, o nouă formulă este definită prin implicație
 \end{description}
+
+Această metodă se numește \textbf{inducție structurală}.
 
 \noindent În următoarea figură puteți vedea cum sunt construite formulele din doar două variabile.
 
@@ -139,7 +142,239 @@ toate celelalte formule. În loc de un singur pas incremental, avem doi:
 	\end{tikzpicture}
 \end{center}
 
+\subsection{Principiul inducției pe formule}
 
+Același principiu poate fi a aplicat pentru a demonstra că orice formulă respectă o proprietate \textbf{P} (e.g., orice formulă are mai \( \leq \) conectori logici
+decât variabile, orice formulă este bine parantezată, etc.).
+
+\begin{prop}
+
+	Fie \textbf{P} o proprietate. Presupunem că:
+
+	\begin{description}
+		\item[(0)] Orice variabilă \( v \) are proprietatea \textbf{P}.
+		\item[(1)] Pentru orice formulă \( \varphi \), dacă \( \varphi \) are proprietatea \textbf{P}, atunci \( \neg \varphi \) are proprietatea \textbf{P}.
+		\item[(2)] Pentru orice formule \( \varphi, \psi \), dacă acestea au proprietatea \textbf{P}, atunci \( \varphi \to \psi \) are proprietatea \textbf{P}.
+	\end{description}
+
+	\noindent	Atunci orice formulă \( \varphi \) are proprietatea \textbf{P}.
+
+\end{prop}
+
+\begin{eg}
+
+	Vrem să demonstrăm că orice formulă \( \varphi \) este parantezată corect. Formal: orice formulă \( \varphi \) are proprietatea \( \mathbf{P}(\varphi) : st(\varphi) = dr(\varphi) \),
+	unde \( st(\varphi) \) este numărul de paranteze "(", iar \( dr(\varphi) \) este numărul de paranteze ")".
+
+\end{eg}
+
+\begin{proof}
+	Demonstrăm proprietatea $P(\varphi)$ prin inducție structurală după construcția formulei $\varphi$.
+
+	\begin{description}
+		\item[Cazul de bază:] $\varphi = v$, unde $v \in V$ este o variabilă propozițională.
+			Conform definiției sintaxei, variabilele nu conțin paranteze.
+			\[ st(v) = 0 \text{ și } dr(v) = 0 \implies st(v) = dr(v) \]
+			Deci $P(v)$ este adevărată.
+
+		\item[Pasul inductiv:] Presupunem că proprietatea este adevărată pentru formulele $\psi$ și $\chi$ (Ipoteza Inductivă). Deci $st(\psi) = dr(\psi)$ și $st(\chi) = dr(\chi)$.
+
+			Demonstrăm pentru regulile de construcție:
+
+			\begin{itemize}
+				\item \textbf{Cazul} $\varphi = (\neg \psi)$:
+				      Calculăm numărul de paranteze folosind definiția recursivă:
+				      \begin{align*}
+					      st(\varphi) & = st(\psi) + 1 \\
+					      dr(\varphi) & = dr(\psi) + 1
+				      \end{align*}
+				      Din Ipoteza Inductivă știm că $st(\psi) = dr(\psi)$. Adunând $1$ în ambele părți, obținem $st(\varphi) = dr(\varphi)$.
+
+				\item \textbf{Cazul} $\varphi = (\psi \to \chi)$:
+				      Calculăm numărul de paranteze:
+				      \begin{align*}
+					      st(\varphi) & = 1 + st(\psi) + st(\chi) \\
+					      dr(\varphi) & = dr(\psi) + dr(\chi) + 1
+				      \end{align*}
+				      Înlocuind din Ipoteza Inductivă ($st \to dr$), avem:
+				      \[ st(\varphi) = 1 + dr(\psi) + dr(\chi) \]
+				      Datorită comutativității adunării, $1 + dr(\psi) + dr(\chi) = dr(\psi) + dr(\chi) + 1$, deci $st(\varphi) = dr(\varphi)$.
+			\end{itemize}
+	\end{description}
+
+	Conform principiului inducției structurale, proprietatea $P(\varphi)$ este adevărată pentru orice formulă $\varphi$.
+\end{proof}
+
+\subsection{Principiul recursiei pe formule}
+
+Dacă inducția ne ajută să demonstrăm proprietăți, principiul recursiei pe formule este folosit pentru a da \textbf{definiții recursive} riguroase diverselor funcții asociate formulelor.
+
+\begin{prop}[Principiul recursiei pe formule]
+
+	Fie $A$ o mulțime și funcțiile:
+	$$G_0 : V \to A, \quad G_\neg : A \to A, \quad G_\to : A \times A \to A$$
+
+	Atunci există o \textbf{unică} funcție $F : Form \to A$ care satisface următoarele proprietăți:
+
+	\begin{description}
+		\item[(R0)] $F(v) = G_0(v)$ pentru orice variabilă $v \in V$.
+		\item[(R1)] $F(\neg \varphi) = G_\neg(F(\varphi))$ pentru orice formulă $\varphi$.
+		\item[(R2)] $F(\varphi \to \psi) = G_\to(F(\varphi), F(\psi))$ pentru orice formule $\varphi, \psi$.
+	\end{description}
+
+\end{prop}
+
+\begin{eg}
+	Vrem să definim o funcție $var : Form \to \mathcal{P}(V)$ care extrage mulțimea tuturor variabilelor propoziționale ce apar într-o formulă $\varphi$ (unde $\mathcal{P}(V)$ este mulțimea părților lui $V$). O definiție recursivă a lui $var$ este următoarea:
+
+	$$
+		\begin{aligned}
+			var(v)                & = \{v\}                       &  & \text{pentru orice variabilă } v           \\
+			var(\neg \varphi)     & = var(\varphi)                &  & \text{pentru orice formulă } \varphi       \\
+			var(\varphi \to \psi) & = var(\varphi) \cup var(\psi) &  & \text{pentru orice formule } \varphi, \psi
+		\end{aligned}
+	$$
+
+	În acest caz, maparea pe principiul general se face astfel:
+	\begin{itemize}
+		\item Mulțimea $A$ este $\mathcal{P}(V)$.
+		\item $G_0 : V \to \mathcal{P}(V)$, definită prin $G_0(v) = \{v\}$.
+		\item $G_\neg : \mathcal{P}(V) \to \mathcal{P}(V)$, definită prin $G_\neg(X) = X$ (negația nu modifică variabilele existente).
+		\item $G_\to : \mathcal{P}(V) \times \mathcal{P}(V) \to \mathcal{P}(V)$, definită prin $G_\to(X, Y) = X \cup Y$ (reunim variabilele din ambele subformule).
+	\end{itemize}
+
+\end{eg}
+
+\section{Semantica LP}
+
+În acest capitol se studiază semantica, adică, informal, \textbf{ce înseamnă o formulă/cum îi dăm sens}. Acest lucru se face prin intermediul \textbf{evaluărilor}
+(sau interpretărilor, dar mai rar), care sunt funcții ce \textbf{dau valoare variabilelor propoziționale}.
+
+\subsection{Evaluări}
+
+O evaluarea este orice funcție:
+
+$$
+	e : V \to \{0, 1 \}
+$$
+
+Cu ajutorul recursiei pe formule este foarte ușor să extindem de la evaluări (care sunt pe variabile), la o funcție care interpretează formule:
+
+\begin{theorem}
+	\label{th:eval}
+	Pentru orice evaluare \( e : V \to \{0, 1 \} \)  există o unică funcție (vezi recursia pe formule):
+
+	$$
+		e^+ : Form \to \{ 0, 1 \}
+	$$
+
+	\noindent care verifică următoarele proprietăți
+
+	\begin{description}
+		\item[(1)]  \( e^+(v) = e(v), \quad \forall v \in V \)
+		\item[(2)] \( e^+(\neg \varphi) = \bm{\neg} e^+(\varphi), \quad \forall \varphi \in Form  \)
+		\item[(3)] \( e^+(\varphi \to \psi) = e^+(\varphi) \bm{\to} e^+(\psi), \quad \forall \varphi, \psi \in Form \)
+	\end{description}
+\end{theorem}
+
+
+Două cum puteți vedea, conectorii logici (\( \neg, \to \)) sunt îngroșați atunci când sunt scoși din \( e^+ \). Acest lucru este pentru a
+arăta că aceștia nu mai sunt simboluri, în cadrul formulelor, ci \textbf{operații} pe \( \{0, 1\} \), cu tabele de adevăr știute.
+
+\begin{prop}
+	\label{prop:eval_id}
+	Dacă două evaluări sunt identice pentru toate variabilele dintr-o formulă \( \varphi \), atunci ele vor da aceeași evaluare a formulei.
+
+	\[
+		e_1(v) = e_2(v) \; \forall v \in Var(\varphi) \implies e_1^+(\varphi) = e_2^+(\varphi)
+	\]
+\end{prop}
+
+Propoziția \ref{prop:eval_id} este utilă prin faptul că, atunci când evaluăm formule, putem să ne restrângem doar la variabilele
+din formulele pe care le evaluăm. Acest lucru se traduce în \textbf{metoda tabelului}, în care fiecare linie a tabelului este
+o evaluare diferită a variabilelor din \( Var(\varphi) \).
+
+\subsection{Modele. Tautologii}
+
+\begin{definition}
+	\label{def:model}
+	Fie o evaluare \( e : V \to \{0, 1 \} \).
+
+	\begin{description}
+		\item[Model:] \( e \) este \textbf{model} pentru o formulă \( \varphi \) dacă \( e^+(\varphi) = 1 \). Notăm \( e \models \varphi \).
+		\item[Satisfiabilitate:] O formulă \( \varphi \) se numește \textbf{satisfiabilă} dacă există cel puțin o evaluare \( e \) care este model pentru \( \varphi \) (adică \( \exists e \) a.î. \( e \models \varphi \)).
+		\item[Nesatisfiabilitate:] O formulă \( \varphi \) este \textbf{nesatisfiabilă} (sau \textbf{contradictorie}) dacă nu admite niciun model (adică pentru orice evaluare \( e \), \( e^+(\varphi) = 0 \)). Notăm uneori prin \( \varphi \models \bot \).
+		\item[Tautologie:] O formulă \( \varphi \) este \textbf{tautologie} dacă orice evaluare este model pentru ea (adică \( \forall e, e \models \varphi \)). Notăm acest lucru prin \( \models \varphi \).
+	\end{description}
+
+\end{definition}
+
+\begin{notation}
+	Mulțimea tuturor modelelor unei formule \( \varphi \) se notează cu \( Mod(\varphi) \).
+	\[ Mod(\varphi) = \{ e : V \to \{0, 1\} \mid e \models \varphi \} \]
+\end{notation}
+
+Toți termenii definiți în \ref{def:model} sunt foarte importanți și trebuie reținuți, pentru că o să tot lucrați cu ei.
+
+\begin{eg}
+	Formula \( p \lor \neg p \) este o \textbf{tautologie}, deoarece indiferent de valoarea lui \( p \), formula va fi adevărată. În schimb, \( p \land \neg p \) este o \textbf{contradicție}, deoarece nicio evaluare nu o poate face adevărată.
+\end{eg}
+
+\begin{prop}[Legile lui De Morgan]
+	Pentru orice formule $\varphi, \psi \in Form$, au loc următoarele echivalențe logice:
+	\begin{align}
+		\neg(\varphi \lor \psi)  & \sim \neg\varphi \land \neg\psi \tag{10} \\
+		\neg(\varphi \land \psi) & \sim \neg\varphi \lor \neg\psi \tag{11}
+	\end{align}
+\end{prop}
+
+\textbf{Demonstrație:}
+
+Vom demonstra prima lege: $\neg(\varphi \lor \psi) \sim \neg\varphi \land \neg\psi$. Demonstrația celei de-a doua legi se realizează în mod absolut analog.
+
+\vspace{0.3cm}
+\noindent \textbf{(i) Metoda tabelului de adevăr}
+
+Fie $e : V \to \{0,1\}$ o evaluare oarecare. Construim tabelul de adevăr pentru a evalua extensia $e^+$ pentru ambele formule. Coloanele de la stânga liniei verticale reprezintă valorile posibile pentru $e^+(\varphi)$ și $e^+(\psi)$, iar în dreapta evaluăm pas cu pas subformulele.
+
+\[
+	\begin{array}{cc|c|c|cc|c}
+		\varphi & \psi & \varphi \lor \psi & \neg(\varphi \lor \psi) & \neg\varphi & \neg\psi & \neg\varphi \land \neg\psi \\
+		\hline
+		1       & 1    & 1                 & 0                       & 0           & 0        & 0                          \\
+		1       & 0    & 1                 & 0                       & 0           & 1        & 0                          \\
+		0       & 1    & 1                 & 0                       & 1           & 0        & 0                          \\
+		0       & 0    & 0                 & 1                       & 1           & 1        & 1
+	\end{array}
+\]
+
+Analizând tabelul, observăm că pentru toate cele 4 cazuri posibile ale unei evaluări $e$, valoarea sub coloana $\neg(\varphi \lor \psi)$ este identică cu valoarea sub coloana $\neg\varphi \land \neg\psi$. Astfel, $e^+(\neg(\varphi \lor \psi)) = e^+(\neg\varphi \land \neg\psi)$ pentru orice evaluare $e$, ceea ce înseamnă că au exact aceleași modele. Prin urmare, $\neg(\varphi \lor \psi) \sim \neg\varphi \land \neg\psi$.
+
+\vspace{0.3cm}
+\noindent \textbf{(ii) Metoda prin raționament semantic (formal)}
+
+Raționăm direct. Pentru o evaluare arbitrară $e : V \to \{0,1\}$, observăm că:
+\begin{align*}
+	e^+(\neg(\varphi \lor \psi))    & = \bm{\neg} (e^+(\varphi) \bm{\lor} e^+(\psi)),          \\
+	e^+(\neg\varphi \land \neg\psi) & = \bm{\neg} e^+(\varphi) \bm{\land} \bm{\neg} e^+(\psi).
+\end{align*}
+
+Avem cazurile:
+
+(a) $e^+(\varphi) = 0$. Atunci
+\begin{align*}
+	\bm{\neg} (e^+(\varphi) \bm{\lor} e^+(\psi))          & = \bm{\neg} (0 \bm{\lor} e^+(\psi)) = \bm{\neg} e^+(\psi),                                             \\
+	\bm{\neg} e^+(\varphi) \bm{\land} \bm{\neg} e^+(\psi) & = \bm{\neg} 0 \bm{\land} \bm{\neg} e^+(\psi) = 1 \bm{\land} \bm{\neg} e^+(\psi) = \bm{\neg} e^+(\psi).
+\end{align*}
+
+(b) $e^+(\varphi) = 1$. Atunci
+\begin{align*}
+	\bm{\neg} (e^+(\varphi) \bm{\lor} e^+(\psi))          & = \bm{\neg} (1 \bm{\lor} e^+(\psi)) = \bm{\neg} 1 = 0,                               \\
+	\bm{\neg} e^+(\varphi) \bm{\land} \bm{\neg} e^+(\psi) & = \bm{\neg} 1 \bm{\land} \bm{\neg} e^+(\psi) = 0 \bm{\land} \bm{\neg} e^+(\psi) = 0.
+\end{align*}
+
+Deoarece în ambele cazuri rezultatele evaluărilor coincid, obținem că $e^+(\neg(\varphi \lor \psi)) = e^+(\neg\varphi \land \neg\psi)$ pentru orice evaluare $e$. Rezultă $Mod(\neg(\varphi \lor \psi)) = Mod(\neg\varphi \land \neg\psi)$, deci $\neg(\varphi \lor \psi) \sim \neg\varphi \land \neg\psi$.
+\hfill $\square$
 \section*{Prolog Example: Family Tree}
 
 Below is an example of a simple Prolog program rendered directly in \LaTeX.
