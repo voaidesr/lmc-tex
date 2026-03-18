@@ -375,6 +375,11 @@ Avem cazurile:
 
 Deoarece în ambele cazuri rezultatele evaluărilor coincid, obținem că $e^+(\neg(\varphi \lor \psi)) = e^+(\neg\varphi \land \neg\psi)$ pentru orice evaluare $e$. Rezultă $Mod(\neg(\varphi \lor \psi)) = Mod(\neg\varphi \land \neg\psi)$, deci $\neg(\varphi \lor \psi) \sim \neg\varphi \land \neg\psi$.
 \hfill $\square$
+
+
+\newpage
+
+
 \section{Prolog Basics}
 Prologul are la baza \textbf{rezolutia}, despre care o sa invatati mai tarziu in curs, dar pe scurt, se bazeaza pe a ajunge la un adevar.
 Noi cand scriem cod in prolog de fapt scriem la fiecare termen \textbf{un predicat} (o functie care returneaza bool), si la chestii mai complicate
@@ -389,8 +394,6 @@ prologul practic cauta o cale catre un adevar prin predicatele pe care le defini
 
     In linia de comanda cand rulam programul daca dam variabile ca parametrii prolog ii va interpreta ca necunoscute si incearca sa gaseasca valori care respecta regulile pentru acele variabile.
 \end{note}
-
-\newpage
 
 Mai jos aveti un exemplu de niste predicate simple (fapte) si un predicat definit prin reguli:
 
@@ -422,6 +425,9 @@ Este important sa distingem intre operatorii =, ==, 'is':
 \end{itemize}
 
 Exemple:
+
+\newpage
+
 \begin{lstlisting}[caption={Distinctie operatorii in prolog}]
 ?- f(X, 2) = f(1, Y).
 X = 1,
@@ -440,7 +446,6 @@ X = 5.
 false. % Aici termenul '5' nu este egal cu termenul '2 + 3'
 \end{lstlisting}
 
-\newpage
 \subsection*{Liste in Prolog}
 Listele arata vizual ca si in python: \texttt{[1, 2, abc, 4, 5]} dar modul in care lucram cu ele este diferit. In prolog ne folosim de o sintaxa cu Head si Tail:
 \begin{lstlisting}[caption={Liste in prolog}]
@@ -465,6 +470,8 @@ Se da o lista sub forma \texttt{[1, [2, [3, 4], 5], 6]} si trebuie sa o transfor
 
 \textbf{Rezolvare:}
 
+\newpage
+
 \begin{lstlisting}[caption={Exercitiu Flatten List}]
 my_flatten([], []). % Cazul de baza
 
@@ -480,8 +487,6 @@ my_flatten([H|T], [H|Tr]) :-
     \+ is_list(H),  % Operatorul \+ este operatorul not
     my_flatten(T, Tr).
 \end{lstlisting}
-
-\newpage
 
 \subsection*{Exercitii propuse}
 
