@@ -290,9 +290,33 @@
 		]}{\end{tcolorbox}}
 
 
+% PROLOG STYLING Start
 \definecolor{commentgreen}{rgb}{0,0.6,0}
 \definecolor{keywordblue}{rgb}{0,0,0.8}
 \definecolor{stringpurple}{rgb}{0.58,0,0.82}
+\definecolor{varorange}{rgb}{0.8,0.3,0.0}       % Color for Prolog variables
+\definecolor{parenthyellow}{rgb}{0.75,0.6,0.0}  % Darker yellow (gold) for readability
+\definecolor{bracketpink}{rgb}{0.8,0.2,0.6}     % Pink/Purple for square brackets
+
+\makeatletter
+% \idstyle correctly inspects the listings internal token for A-Z and _
+\newcommand*\idstyle{%
+  \expandafter\id@style\the\lst@token\relax
+}
+\def\id@style#1#2\relax{%
+  \ifcat\relax\noexpand#1\relax 
+  \else
+    \ifnum`#1>64 % ASCII > 64
+      \ifnum`#1<91 % ASCII < 91 (A-Z)
+        \color{varorange}%
+      \fi
+    \fi
+    \ifnum`#1=95 % ASCII = 95 (_)
+      \color{varorange}%
+    \fi
+  \fi
+}
+\makeatother
 
 % Setup the Prolog style
 \lstset{
@@ -301,13 +325,22 @@
 	keywordstyle=\color{keywordblue}\bfseries,
 	commentstyle=\color{commentgreen}\itshape,
 	stringstyle=\color{stringpurple},
+	identifierstyle=\idstyle, 
+	alsoletter={_},           
 	numbers=left,
 	numberstyle=\tiny\color{gray},
 	stepnumber=1,
 	frame=single,
 	breaklines=true,
-	showstringspaces=false
+	showstringspaces=false,
+	% The asterisk (*) ensures these replacements DO NOT happen inside comments/strings
+	literate=*{:-}{{\textcolor{keywordblue}{:-}}}2
+            %   {(}{{\textcolor{parenthyellow}{(}}}1
+            %   {)}{{\textcolor{parenthyellow}{)}}}1
+              {[}{{\textcolor{bracketpink}{[}}}1
+              {]}{{\textcolor{bracketpink}{]}}}1
 }
+% PROLOG STYLING End
 
 % figure support
 \usepackage{import}
