@@ -9,7 +9,8 @@
 
 	\item Seminariile sunt destul de complexe, acoperă ok materia, iar soluțiile sunt postate pe site, așa că noi o să încercăm să lucrăm la tutoriat exerciții extra.
 
-	\item Puteți să ne scrieți oricând în privat/pe grup cu întrebări/sugestii/idei, iar noi o să încercăm să vă ajutăm și să le punem în practică. De asemenea, puteți să ne sugerați ce ați
+	\item Puteți să ne scrieți oricând în privat/pe
+	      grup cu întrebări/sugestii/idei, iar noi o să încercăm să vă ajutăm și să le punem în practică. De asemenea, puteți să ne sugerați ce ați
 	      refera să lucrăm la tutoriat.
 
 	\item O să publicăm pe GitHub tutoriatele săptămânal și o să anunțăm, prin README, ce o să facem la următorul tutoriat. De asemenea, plănuim să creăm liste de exerciții, la care să publicăm și rezolvările. Dacă o să doriți să ne uităm pe rezolvările voaste, puteți să ne ziceți.
@@ -72,6 +73,8 @@ toate celelalte formule. În loc de un singur pas incremental, avem doi:
 	\item[\( \neg \)] putem nega formula noastră curentă pentru a obține o nouă formulă
 	\item[\( \to \)] atunci când avem două formule, o nouă formulă este definită prin implicație
 \end{description}
+
+Această metodă se numește \textbf{inducție structurală}.
 
 \noindent În următoarea figură puteți vedea cum sunt construite formulele din doar două variabile.
 
@@ -138,6 +141,70 @@ toate celelalte formule. În loc de un singur pas incremental, avem doi:
 
 	\end{tikzpicture}
 \end{center}
+
+\subsubsection{Principiul inducției pe formule}
+
+Același principiu poate fi a aplicat pentru a demonstra că orice formulă respectă o proprietate \textbf{P} (e.g., orice formulă are mai \( \leq \) conectori logici
+decât variabile, orice formulă este bine parantezată, etc.).
+
+\begin{prop}
+
+	Fie \textbf{P} o proprietate. Presupunem că:
+
+	\begin{description}
+		\item[(0)] Orice variabilă \( v \) are proprietatea \textbf{P}.
+		\item[(1)] Pentru orice formulă \( \varphi \), dacă \( \varphi \) are proprietatea \textbf{P}, atunci \( \neg \varphi \) are proprietatea \textbf{P}.
+		\item[(2)] Pentru orice formule \( \varphi, \psi \), dacă acestea au proprietatea \textbf{P}, atunci \( \varphi \to \psi \) are proprietatea \textbf{P}.
+	\end{description}
+
+	\noindent	Atunci orice formulă \( \varphi \) are proprietatea \textbf{P}.
+
+\end{prop}
+
+\begin{eg}
+
+	Vrem să demonstrăm că orice formulă \( \varphi \) este parantezată corect. Formal: orice formulă \( \varphi \) are proprietatea \( \mathbf{P}(\varphi) : st(\varphi) = dr(\varphi) \),
+	unde \( st(\varphi) \) este numărul de paranteze "(", iar \( dr(\varphi) \) este numărul de paranteze ")".
+
+\end{eg}
+
+\begin{proof}
+	Demonstrăm proprietatea $P(\varphi)$ prin inducție structurală după construcția formulei $\varphi$.
+
+	\begin{description}
+		\item[Cazul de bază:] $\varphi = v$, unde $v \in V$ este o variabilă propozițională.
+			Conform definiției sintaxei, variabilele nu conțin paranteze.
+			\[ st(v) = 0 \text{ și } dr(v) = 0 \implies st(v) = dr(v) \]
+			Deci $P(v)$ este adevărată.
+
+		\item[Pasul inductiv:] Presupunem că proprietatea este adevărată pentru formulele $\psi$ și $\chi$ (Ipoteza Inductivă). Deci $st(\psi) = dr(\psi)$ și $st(\chi) = dr(\chi)$.
+
+			Demonstrăm pentru regulile de construcție:
+
+			\begin{itemize}
+				\item \textbf{Cazul} $\varphi = (\neg \psi)$:
+				      Calculăm numărul de paranteze folosind definiția recursivă:
+				      \begin{align*}
+					      st(\varphi) & = st(\psi) + 1 \\
+					      dr(\varphi) & = dr(\psi) + 1
+				      \end{align*}
+				      Din Ipoteza Inductivă știm că $st(\psi) = dr(\psi)$. Adunând $1$ în ambele părți, obținem $st(\varphi) = dr(\varphi)$.
+
+				\item \textbf{Cazul} $\varphi = (\psi \to \chi)$:
+				      Calculăm numărul de paranteze:
+				      \begin{align*}
+					      st(\varphi) & = 1 + st(\psi) + st(\chi) \\
+					      dr(\varphi) & = dr(\psi) + dr(\chi) + 1
+				      \end{align*}
+				      Înlocuind din Ipoteza Inductivă ($st \to dr$), avem:
+				      \[ st(\varphi) = 1 + dr(\psi) + dr(\chi) \]
+				      Datorită comutativității adunării, $1 + dr(\psi) + dr(\chi) = dr(\psi) + dr(\chi) + 1$, deci $st(\varphi) = dr(\varphi)$.
+			\end{itemize}
+	\end{description}
+
+	Conform principiului inducției structurale, proprietatea $P(\varphi)$ este adevărată pentru orice formulă $\varphi$.
+\end{proof}
+
 
 
 \section*{Prolog Example: Family Tree}
