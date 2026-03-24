@@ -5,11 +5,13 @@ This project is built around `master.tex` + `preamble.tex` and compiled with `la
 ## Build with make
 
 Requirements:
+
 - `make`
 - `latexmk`
 - A LaTeX distribution (TeX Live or MiKTeX)
 
 Targets:
+
 - `make` or `make build`: compile `master.tex` once into `build/`
 - `make watch`: watch mode (`latexmk -pvc`) for live rebuilds
 - `make section SECTION=t1`: compile only `sections/t1.tex` through the master template
@@ -23,6 +25,7 @@ For section builds, output is `build/<SECTION>.pdf` (for example `build/t1.pdf`)
 The preset lives in `preamble.tex`. Keep document content in `sections/*.tex` and keep `master.tex` as the orchestration file.
 
 Guidelines:
+
 - Add content as section files and include them from `master.tex` with `\\input{sections/...}`.
 - Reuse preset theorem environments instead of redefining local ad-hoc boxes:
   - `definition`, `theorem`, `lemma`, `prop`, `corollary`
@@ -46,6 +49,7 @@ Add this in your VS Code settings (`.vscode/settings.json` or user settings):
 ```
 
 Typical workflow in VS Code:
+
 1. Run `make watch` in the terminal.
 2. Edit `.tex` files normally.
 3. Use the PDF viewer for preview; `latexmk` handles recompilation.
@@ -60,10 +64,19 @@ Typical workflow in VS Code:
 - 1h prolog - (baze, explicăm filozofia, cum gândești și cum funcționează prolog, sintaxa din l1) - Vlăduț
 - la prolog, vezi cum poți să faci code listing in latex
 
+### Săptămâna 2
+
+#### LP
+
+- continuăm cu evaluări și semantică (din celălalt tutoriate) + exercițiu de tipul **să se găsească un model pt...**
+- FNC și FND (1h)
+
+#### Prolog
+
+- exerciții
+
 #### Listă - idei
 
 - mai încolo, listă de exerciții (seminar + prolog, poate?).
 - 1/2 ex rezolvate de noi, si 2 exercitii sa le rezolve ei - **ii intrebam daca vor sa ii ajutam/verificam**
 
-
->[!NOTE] **MARKERE**
