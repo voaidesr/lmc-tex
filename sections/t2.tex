@@ -1,2 +1,229 @@
-\chapter{Continuare Prolog, FNC și FND}
+\chapter{Continuare Prolog, FNC si FND}
 
+\section{Prolog Aritmetica si Exercitii}
+Aritmetica in Prolog este putin diferita fata de limbajele procedurale si poate fi usor de confundat.
+Avem urmatorii operatori relevanti:
+\texttt{+, -, *, /, //, is, <, >, >=, <=, =\textbackslash=, =:=}.
+Majoritatea sunt intuitivi si fac ceea ce v-ati astepta, dar unele sunt mai confusing si nu fac poate ce credeti ca fac.
+
+Operatorul \texttt{is}, utilizat astfel: \texttt{X is 2 + 3} sau \texttt{X is Y + 1}, va evalua expresia aritmetica din dreapta si va \textbf{unifica} rezultatul cu variabila din stanga. Conditie: Toate variabilele din partea dreapta (ex. \texttt{Y}) trebuie sa fie \textbf{deja instantiate} cu valori numerice.
+
+Operatorul \texttt{=:=}, utilizat astfel: \texttt{10 =:= 5 + 5}, va evalua expresiile din ambele parti si doar verifica daca rezultatele sunt egale aritmetic. Acesta \textbf{nu unifica} variabile; ambele parti trebuie sa poata fi evaluate numeric in momentul apelului.
+
+Similar cu \texttt{=:=}, operatorii relationali (\texttt{<, >, >=, <=, =\textbackslash=}) realizeaza comparatii numerice dupa evaluarea ambelor parti si \textbf{nu realizeaza unificare}.
+
+Acesti operatori sunt utilizati pentru a restrange universul de solutii, dar nu pot fi folositi pentru a "atribui" valori variabilelor, cu exceptia lui \texttt{is}.
+
+\textbf{Exemple relevante:}
+
+\texttt{?- X is 5 + 2.}
+
+\texttt{X = 7.}
+
+\texttt{?- 7 is 5 + 2.}
+
+\texttt{true.}
+
+\texttt{?- 10 is 5 + 2.}
+
+\texttt{false.}
+
+\texttt{?- 10 =:= 5 + 5.}
+
+\texttt{true.}
+
+\texttt{?- X =:= 5 + 2.}
+
+\texttt{ERROR: Arguments are not sufficiently instantiated.}
+
+\subsection*{Exercitii rezolvate}
+
+\begin{note}[Sfaturi generale]
+	In rezolvari de obicei e util sa ne gandim la toate cazurile de baza/triviale. Puteti sa scrieti oricate cazuri va vin in minte la inceput ca sa intelegeti problema mai bine, chiar daca sunt acoperite de cazurile recursive (recomandat e sa le stergeti dupa ca posibil sa interfereze in unele cazuri).
+
+    In unele cazuri unele probleme ies mult mai usor daca va definiti predicate auxiliare/intermediare (pot avea chiar si acelasi nume atat timp cat au un numar diferit de parametrii). De exemplu:
+\end{note}
+
+
+
+
+\begin{lstlisting}[caption={Auxiliary predicates example}]
+square(0, _).
+square(W, C) :- square(W, W, C).
+
+square(0, _, _).
+square(I, W, C) :- 
+    I > 0,
+    I1 is I - 1,
+    square(I1, W, C),
+    squareRow(W, C).
+
+squareRow(0, _) :- nl.
+squareRow(N, C) :- 
+    N > 0, 
+    N1 is N - 1,
+    squareRow(N1, C),
+    write(C).
+\end{lstlisting}
+
+
+
+
+\subsubsection*{Exercitiul 1}
+
+Definiti \texttt{suma\_lista/2} care face suma elementelor din lista data ca prim argument si pune rezultatul in al doilea argument.
+
+Rulati si confirmati:
+
+\texttt{?- suma\_lista([1, 2, 3], 6).}
+
+\texttt{true.}
+
+\texttt{?- suma\_lista([1, 2, 3], X).}
+
+\texttt{X = 6.}
+
+\texttt{?- suma\_lista([1, 2, X], 6).}
+
+\texttt{ERROR: Arguments are not sufficiently instantiated.}
+
+\subsubsection*{Solutie:}
+
+\begin{lstlisting}
+suma_lista([], 0).
+suma_lista([H|T], Sr) :-
+    suma_lista(T, S),
+    Sr is H + S.
+\end{lstlisting}
+
+
+\newpage
+
+
+\subsubsection*{Exercitiul 2}
+
+Definiti \texttt{medie/2} care face media aritmetica a elementelor din lista data ca prim argument si pune rezultatul in al doilea argument.
+
+Rulati si confirmati:
+
+\texttt{?- medie([1, 2, 3, 4], X).}
+
+\texttt{X = 2.5 .}
+
+\texttt{?- medie([1, 2, 3, X], 2.5).}
+
+\texttt{ERROR: Arguments are not sufficiently instantiated.}
+
+\subsubsection*{Solutie:}
+
+\begin{lstlisting}
+% media([], _) :- false.
+% media([A], A).
+media(L, R) :-
+    stats(L, S, N),
+    N > 0,
+    R is S / N.
+
+stats([], 0, 0).
+stats([H|T], S, N) :-
+    stats(T, S_coada, N_coada),
+    S is H + S_coada,
+    N is N_coada + 1.
+\end{lstlisting}
+
+
+
+
+
+
+\subsection*{Exercitii propuse}
+
+\begin{remark}
+	Incercati sa 'suciti' apelurile in toate directiile cand testati ca sa vedeti cand reuseste si cand nu reuseste sa unifice si sa gaseasca un rezultat (si daca credeti ca ar trebui sa poata, incercati sa solutionati).
+\end{remark}
+
+
+
+\subsubsection*{Exercitiul 1}
+
+Definiti \texttt{split/4} care sparge lista primita ca prim argument la pozitia primita ca al doilea argument in doua liste (parametrii 3 si 4).
+
+Rulati si confirmati:
+
+\texttt{?- split([1, 2, 3, 4], 2, [1, 2], [3, 4]).}
+
+\texttt{true.}
+
+\texttt{?- split([1, 2, 3, 4], 2, A, B).}
+
+\texttt{A = [1, 2], B = [3, 4].}
+
+\texttt{?- split(X, 2, [1, 2], [3, 4]).}
+
+\texttt{X = [1, 2, 3, 4].}
+
+\texttt{?- split([1, 2, 3], 0, [], [1, 2, 3]).}
+
+\texttt{true.}
+
+\texttt{?- split([1, 2, 3], X, [1], [2, 3]).}
+
+\texttt{ERROR: Arguments not sufficiently instantiated.}
+
+
+
+
+\newpage
+
+
+
+\subsubsection*{Exercitiul 2}
+
+Definiti predicatul \texttt{filtreaza\_peste/3} care extrage numerele dintr-o lista (primul parametru) care sunt peste un anumit prag (al doilea parametru) intr-o alta lista (al treilea parametru).
+
+Rulati si confirmati:
+
+\texttt{?- filtreaza\_peste([1, 5, 10, 2, 8], 5, R).}
+
+\texttt{R = [10, 8].}
+
+\texttt{?- filtreaza\_peste([10, 20, 30], 40, R).}
+
+\texttt{R = [].}
+
+
+
+
+\subsubsection*{Exercitiul 3}
+
+Definiti predicatul \texttt{intsum/3} care calculeaza suma tuturor numerelor intregi cuprinse intr-un interval [a, b] (primele doua argumente) si pune rezultatul in ultimul argument. 
+
+Rulati si confirmati:
+
+\texttt{?- intsum(1, 4, S).}
+
+\texttt{S = 10. } (1 + 2 + 3 + 4 = 10)
+
+\texttt{?- intsum(5, 5, S).}
+
+\texttt{S = 5.}
+
+
+
+\subsubsection*{Exercitiul 4}
+
+Definiti predicatul \texttt{putere/3} care ridica numarul primit ca prim parametru la puterea data ca al doilea parametru si pune rezultatul in ultimul parametru. 
+
+Rulati si confirmati:
+
+\texttt{?- putere(3, 3, X).}
+
+\texttt{X = 27. }
+
+\texttt{?- intsum(5, 0, X).}
+
+\texttt{X = 1.}
+
+\texttt{?- intsum(5, 2, X).}
+
+\texttt{X = 25.}
