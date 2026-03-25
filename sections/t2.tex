@@ -1,2 +1,262 @@
 \chapter{Continuare Prolog, FNC și FND}
 
+\section{Funcții Boolene}
+
+Funcțiile boolene sunt o altă metodă de a descrie semantic formule în mod complet (de a le interpreta, cu toate evaluările posibile),
+fiind echivalente cu tabelele de adevăr. De fapt un tabel de adevăr definiește o funcție booleană.
+
+Fie o formulă \( \varphi \) și mulțimea tutoror variabilelor propoziționale din această formulă \( Var(\varphi) =
+\{v_{i_1}, v_{i_2}, \dots, v_{i_n} \}\). Conform propoziției \ref{prop:eval_id}, evaluările diferite ale unei
+formule depind doar de valorile pe care le iau cele \( n \) variabile din formulă, și pot avea, deci \( 2^n \) astfel de evaluări. (fiecare
+variabilă poate fi 0 sau 1). Ceea ce înseamnă că pentru un tabel de adevăr vor fi necesare \( 2^n \) intrări.
+
+Este mult mai ușor să codificăm modul de a evalua o formulă printr-o funcție care ia argument \( n \)-upluri de 0 sau 1 (fiecare \( n \)-uplu
+reprezintă valorile pe care le iau, în evaluare, variabilele propoziționale) și care dă rezultat în \( \{0, 1\} \).
+
+\begin{definition}
+
+	O funcție booleană este o funcție \( F : \{0, 1\}^n \to \{0, 1\} \) unde \( n \geq 1 \).
+
+	\noindent spunem că \( n \) este numărul variabilelor lui F.
+\end{definition}
+
+Adică, alegem o evaluare \( e : V \to \{0, 1\}\), astfel încât:
+
+\[
+	e(v) = \begin{cases}
+		\varepsilon_k, \quad v \in Var(\varphi), v = v_{i_k} \\ \\
+		0 \text{ sau } 1, \quad \text{altfel}
+	\end{cases}
+\]
+
+Funcția booleană asociată lui \( F_{\varphi} : \{0, 1\}^n \to \{0, 1\} \) este definită astfel:
+
+\[
+	F_\varphi(\varepsilon_1, \varepsilon_2, \dots, \varepsilon_n) = e^+(\varphi), \quad \forall \; (\varepsilon_1, \varepsilon_2, \dots, \varepsilon_n) \in \{0, 1\}^n
+\]
+
+Chiar dacă, matematic acest lucru pare complicat, nu reprezintă decât formalizarea tabelului de adevăr, unde orice argument de tipul
+\( \varepsilon_1, \varepsilon_2, \dots, \varepsilon_n \) este un rând din tabelul de adevăr.
+
+De aici apar mai multe consecințe utile
+
+\begin{prop}
+	\noindent \begin{enumerate}
+		\item[(i)] Fie $\varphi$ o formulă. Atunci:
+			\begin{enumerate}
+				\item[(a)] $\models \varphi$ ddacă $F_{\varphi}$ este funcția constantă $1$ (Adică, în orice evaluare posibilă a variabilelor din formulă)
+					evaluarea formulei va fi mereu adevărată.).
+				\item[(b)] $\varphi$ este nesatisfiabilă ddacă $F_{\varphi}$ este funcția constantă $0$.
+			\end{enumerate}
+
+		\item[(ii)] Fie $\varphi, \psi$ două formule astfel încât $\text{Var}(\varphi) = \text{Var}(\psi)$. Atunci:
+			\begin{enumerate}
+				\item[(a)] $\varphi \models \psi$ ddacă $F_{\varphi} \leq F_{\psi}$.
+				\item[(b)] $\varphi \sim \psi$ ddacă $F_{\varphi} = F_{\psi}$.
+			\end{enumerate}
+
+		\item[(iii)] Există formule diferite $\varphi, \psi$ a.î. $F_{\varphi} = F_{\psi}$.
+	\end{enumerate}
+\end{prop}
+
+\section{Forma normală Conjunctivă și Forma Normală Disjunctivă}
+
+\subsection{Concepte Fundamentale}
+
+Un concept fundamental în lucrul cu formule este reprezentat de literali.
+
+\begin{definition}
+	Un \textbf{literal} este fie o variabilă propozițională (caz în care se numește literal pozitiv), fie negația unei variabile (caz în care se
+	numește literal negativ).
+
+	\noindent Exemple: \( v_0, v_{100}, \neg v_{30}, \dots \)
+\end{definition}
+
+\subsection{FNC}
+
+O formulă \( \varphi \) este în Forma Normală Conjunctivă dacă este o conjuncție (\( \land \)) de disjuncții \( (\lor) \) de literali.
+
+Un exemplu este: \( (v_0 \lor v_1 \lor v_2) \land (v_{10} \lor v_5)  \).
+
+Mai general, o formulă în FNC are forma
+
+\[
+	\varphi = \Land{i = 1}{n}(\Lor{j=1}{k_i}(L_{i,j}))
+\]
+
+Unde \( L_{i,j} \) este un literal.
+
+\subsection{FND}
+
+O formulă \( \varphi \) este în Forma Normală Disjunctivă dacă este o disjuncție (\( \land \)) de conjuncții \( (\lor) \) de literali.
+
+Un exemplu este: \( (v_0 \land v_1 \land v_2) \lor (v_{10} \land v_5)  \).
+
+Mai general, o formulă în FNC are forma
+
+\[
+	\varphi = \Lor{i = 1}{n}(\Land{j=1}{k_i}(L_{i,j}))
+\]
+
+Unde \( L_{i,j} \) este un literal.
+
+\begin{note}
+	Există câteva cazuri speciale
+	\begin{itemize}
+		\item \( v_1 \land \neg v_5 \land v_{10} \) este atât în FNC (conjuncție de literali), cât și în FND (disjuncția cu un singur element e acel element, deci
+		      e o disjuncție de o singură conjuncție).
+
+		\item \( \neg v_3 \lor v_4 \lor v_5 \) e atât în FNC cât și în FND (ca mai sus)
+
+		\item \( v_0 \) e atât în FNC cât și în FND.
+	\end{itemize}
+\end{note}
+
+\subsection{Aducerea formulelor în FNC și FND}
+
+Aici puteți să înțelegeți și la ce ne ajută funcțiile boolene: să facem legătura între formule și formele normale.
+
+\begin{theorem}
+	Fie \( n \geq 1 \) și \( H : \{0, 1\}^n \to \{0, 1\} \) o funcție booleană arbitrară. Atunci o există o formulă \( \varphi \) în FNC și
+	o formulă \( \psi \) în FND
+
+	\[
+		H = F_\varphi = F_\psi
+	\]
+\end{theorem}
+
+Această teoremă este foarte importantă pentru că ne spune următorul lucru: orice formulă \( \varphi \) am defini (și deci orice funcție booleană asociată ei: H), pot
+găsi o formulă în FNC și o alta în FND care să fie echivalente semantic cu \( \varphi \) (adică să aibă funcțiile boolene egale).
+
+Formal
+
+\begin{theorem}
+	Orice formulă \( \varphi \)  este echivalentă cu o formulă \( \varphi^{FND} \) în FND și cu o formulă
+	\( \varphi^{FNC} \) în FNC.
+\end{theorem}
+
+\subsection{Algoritmul de construcție pentru FNC și FND de la un tabel}
+
+Există un algoritm mecanic prin care putem extrage FND și FNC pentru orice funcție booleană definită printr-un tabel de adevăr.
+
+Acest algoritm se bazează pe identificarea liniilor din tabel unde funcția se evaluează la $1$ (pentru extragerea FND) și la $0$ (pentru extragerea FNC).
+
+\newpage
+
+\begin{prop}
+	Fie $H: \{0, 1\}^n \to \{0, 1\}$ o funcție booleană.
+	\begin{enumerate}
+		\item[(i)] Fiecărei evaluări $(\varepsilon_1, \dots, \varepsilon_n)$ pentru care $H(\varepsilon_1, \dots, \varepsilon_n) = 1$ îi
+			corespunde o conjuncție de literali, definită ca $C = L_1 \land L_2 \land \dots \land L_n$, unde $L_i = v_i$ dacă $\varepsilon_i = 1$ și $L_i = \neg v_i$ dacă $\varepsilon_i = 0$. Funcția $H$ este echivalentă cu disjuncția tuturor acestor termeni.
+		\item[(ii)]  Fiecărei evaluări $(\varepsilon_1, \dots, \varepsilon_n)$ pentru care $H(\varepsilon_1, \dots, \varepsilon_n) = 0$ îi corespunde o disjuncție de literali numită, definită ca $D = L_1 \lor L_2 \lor \dots \lor L_n$, unde $L_i = v_i$ dacă $\varepsilon_i = 0$ și $L_i = \neg v_i$ dacă $\varepsilon_i = 1$. Funcția $H$ este echivalentă cu conjuncția tuturor acestor termeni.
+	\end{enumerate}
+\end{prop}
+
+\subsection*{Aplicație pe un exemplu}
+
+\noindent \textcolor{violet}{\textbf{Exemplu:}} Fie $H : \{0, 1\}^3 \to \{0, 1\}$ descrisă prin tabelul:
+
+\vspace{0.5cm}
+
+\noindent
+\begin{minipage}[c]{0.35\textwidth}
+	\renewcommand{\arraystretch}{1.2}
+	\begin{tabular}{c|c|c|c}
+		$\varepsilon_1$ & $\varepsilon_2$ & $\varepsilon_3$ & $H(\varepsilon_1, \varepsilon_2, \varepsilon_3)$ \\
+		\hline
+		0               & 0               & 0               & \textcolor{blue}{0}                              \\
+		0               & 0               & 1               & \textcolor{blue}{0}                              \\
+		0               & 1               & 0               & \textcolor{magenta}{1}                           \\
+		0               & 1               & 1               & \textcolor{blue}{0}                              \\
+		1               & 0               & 0               & \textcolor{magenta}{1}                           \\
+		1               & 0               & 1               & \textcolor{magenta}{1}                           \\
+		1               & 1               & 0               & \textcolor{magenta}{1}                           \\
+		1               & 1               & 1               & \textcolor{magenta}{1}                           \\
+	\end{tabular}
+\end{minipage}
+\begin{minipage}[c]{0.6\textwidth}
+	\begin{align*}
+		\textcolor{blue}{D_1}    & = \textcolor{blue}{v_1 \lor v_2 \lor v_3}                \\
+		\textcolor{blue}{D_2}    & = \textcolor{blue}{v_1 \lor v_2 \lor \neg v_3}           \\
+		\textcolor{magenta}{C_1} & = \textcolor{magenta}{\neg v_1 \land v_2 \land \neg v_3} \\
+		\textcolor{blue}{D_3}    & = \textcolor{blue}{v_1 \lor \neg v_2 \lor \neg v_3}      \\
+		\textcolor{magenta}{C_2} & = \textcolor{magenta}{v_1 \land \neg v_2 \land \neg v_3} \\
+		\textcolor{magenta}{C_3} & = \textcolor{magenta}{v_1 \land \neg v_2 \land v_3}      \\
+		\textcolor{magenta}{C_4} & = \textcolor{magenta}{v_1 \land v_2 \land \neg v_3}      \\
+		\textcolor{magenta}{C_5} & = \textcolor{magenta}{v_1 \land v_2 \land v_3}
+	\end{align*}
+\end{minipage}
+
+\vspace{0.5cm}
+
+\noindent $\varphi = C_1 \lor C_2 \lor C_3 \lor C_4 \lor C_5$ în FND a.î. $H = F_\varphi$.
+
+\vspace{0.2cm}
+
+\noindent $\psi = D_1 \land D_2 \land D_3$ în FNC a.î. $H = F_\psi$.
+
+\subsection{Algoritmul de aducere a unei formule la FND/FNC}
+
+Aducerea unei formule la Forma Normală Conjunctivă (FNC) sau Forma Normală Disjunctivă (FND) se poate realiza și prin transformări sintactice succesive, folosind echivalențe logice fundamentale, fără a fi necesară construirea întregului tabel de adevăr.
+
+\noindent Algoritmul mecanic constă în următorii pași:
+
+\vspace{0.3cm}
+\noindent \textit{Pasul 1.} Se înlocuiesc implicațiile și echivalențele, folosind regulile:
+\[
+	\varphi \rightarrow \psi \sim \neg \varphi \lor \psi \quad \text{și} \quad \varphi \leftrightarrow \psi \sim (\neg \varphi \lor \psi) \land (\neg \psi \lor \varphi)
+\]
+
+\vspace{0.2cm}
+\noindent \textit{Pasul 2.} Se înlocuiesc dublele negații, folosind $\neg\neg\psi \sim \psi$, și se aplică regulile lui De Morgan pentru a împinge negațiile în interior, direct lângă variabile (transformându-le în literali):
+\[
+	\neg(\varphi \lor \psi) \sim \neg \varphi \land \neg \psi \quad \text{și} \quad \neg(\varphi \land \psi) \sim \neg \varphi \lor \neg \psi
+\]
+
+\vspace{0.2cm}
+\noindent \textit{Pasul 3.} În funcție de forma dorită, se aplică legile de distributivitate:
+\begin{itemize}
+	\item Pentru \textbf{FNC}, se aplică distributivitatea disjuncției ($\lor$) față de conjuncție ($\land$), pentru a înlocui:
+	      \[
+		      \varphi \lor (\psi \land \chi) \sim (\varphi \lor \psi) \land (\varphi \lor \chi) \quad \text{și} \quad (\psi \land \chi) \lor \varphi \sim (\psi \lor \varphi) \land (\chi \lor \varphi)
+	      \]
+	\item Pentru \textbf{FND}, se aplică distributivitatea conjuncției ($\land$) față de disjuncție ($\lor$), pentru a înlocui:
+	      \[
+		      \varphi \land (\psi \lor \chi) \sim (\varphi \land \psi) \lor (\varphi \land \chi) \quad \text{și} \quad (\psi \lor \chi) \land \varphi \sim (\psi \land \varphi) \lor (\chi \land \varphi)
+	      \]
+\end{itemize}
+
+\vspace{0.5cm}
+\subsection*{Exemple de aplicare a algoritmului}
+
+\noindent \textcolor{violet}{\textbf{Exemplul 1 (Aducerea la FNC):}} Fie formula $\alpha = \neg (p \rightarrow q) \lor (r \land s)$. Dorim să o aducem la Forma Normală Conjunctivă.
+
+\begin{itemize}
+	\item \textit{Pasul 1 (Eliminarea implicației):}
+	      \[ \alpha \sim \neg (\neg p \lor q) \lor (r \land s) \]
+	\item \textit{Pasul 2 (Aplicarea legilor De Morgan și eliminarea dublei negații):}
+	      \[ \alpha \sim (\neg\neg p \land \neg q) \lor (r \land s) \sim (p \land \neg q) \lor (r \land s) \]
+	\item \textit{Pasul 3 (Distributivitatea $\lor$ față de $\land$ pentru FNC):}
+	      Aplicăm distributivitatea considerând blocul $(p \land \neg q)$ ca pe o singură componentă:
+	      \[ \alpha \sim ((p \land \neg q) \lor r) \land ((p \land \neg q) \lor s) \]
+	      Acum aplicăm din nou distributivitatea în interiorul fiecărei paranteze mari:
+	      \[ \alpha \sim (p \lor r) \land (\neg q \lor r) \land (p \lor s) \land (\neg q \lor s) \]
+\end{itemize}
+Rezultatul final este o conjuncție de disjuncții, formula fiind acum în FNC.
+
+\vspace{0.5cm}
+\noindent \textcolor{violet}{\textbf{Exemplul 2 (Aducerea la FND):}} Fie formula $\beta = (p \lor q) \land \neg (r \rightarrow s)$. Dorim să o aducem la Forma Normală Disjunctivă.
+
+\begin{itemize}
+	\item \textit{Pasul 1 (Eliminarea implicației):}
+	      \[ \beta \sim (p \lor q) \land \neg (\neg r \lor s) \]
+	\item \textit{Pasul 2 (Aplicarea legilor De Morgan):}
+	      \[ \beta \sim (p \lor q) \land (\neg\neg r \land \neg s) \sim (p \lor q) \land (r \land \neg s) \]
+	\item \textit{Pasul 3 (Distributivitatea $\land$ față de $\lor$ pentru FND):}
+	      Aplicăm distributivitatea blocului $(r \land \neg s)$ peste disjuncția $(p \lor q)$:
+	      \[ \beta \sim (p \land (r \land \neg s)) \lor (q \land (r \land \neg s)) \]
+	      Renunțând la parantezele redundante datorită asociativității conjuncției, obținem:
+	      \[ \beta \sim (p \land r \land \neg s) \lor (q \land r \land \neg s) \]
+\end{itemize}
+Rezultatul final este o disjuncție de conjuncții, formula f
+iind acum în FND.

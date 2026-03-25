@@ -89,7 +89,7 @@ Această metodă se numește \textbf{inducție structurală}.
 			subsetEdge/.style={->, >=Stealth, thick, dashed, draw=gray!60}
 		]
 
-		% ----------------- LEVEL 0 -----------------
+		% ----------------- LEVEL 0 ----------------e
 		\node[setNode] (L0) {
 			\textbf{Nivel 0} ($\Phi_0$)\\
 			$\{v_0, v_1\}$
@@ -377,6 +377,44 @@ Deoarece în ambele cazuri rezultatele evaluărilor coincid, obținem că $e^+(\
 \hfill $\square$
 
 
+\begin{ex}
+	Să se găsească câte un model (o evaluare de adevăr) pentru fiecare dintre următoarele formule:
+	\begin{itemize}
+		\item[(i)] $\varphi_1 = (v_1 \vee v_2) \to \neg v_3$
+		\item[(ii)] $\varphi_2 = (v_0 \wedge v_1) \wedge \neg(v_1 \to v_2)$
+		\item[(iii)] $\varphi_3 = v_5 \leftrightarrow (v_6 \wedge \neg v_5)$
+	\end{itemize}
+\end{ex}
+
+\begin{solutie}
+	Reamintim că un model pentru o formulă $\varphi$ este o funcție de evaluare $e: V \to \{0, 1\}$ astfel încât $e^*(\varphi) = 1$.
+
+	\begin{itemize}
+		\item[\textbf{(i)}] Pentru $\varphi_1 = (v_1 \vee v_2) \to \neg v_3$:
+			O implicație este adevărată dacă antecedentul este fals sau consecventul este adevărat.
+			Alegem un model $e$ în care $e(v_1) = 0$ și $e(v_2) = 0$. Atunci:
+			$$e^+((v_1 \vee v_2) \to \neg v_3) = (0 \vee 0) \to e^+(\neg v_3) = 0 \to e^+(\neg v_3) = 1$$
+			Deci, un model posibil este orice funcție $e$ cu $e(v_1) = 0, e(v_2) = 0$ (valorile pentru $v_3$ și restul variabilelor pot fi arbitrare).
+
+		\item[\textbf{(ii)}] Pentru $\varphi_2 = (v_0 \wedge v_1) \wedge \neg(v_1 \to v_2)$:
+			Pentru ca o conjuncție să fie adevărată, ambii termeni trebuie să fie adevărați.
+			\begin{enumerate}
+				\item $e^+(v_0 \wedge v_1) = 1 \implies e(v_0) = 1$ și $e(v_1) = 1$.
+				\item $e^+(\neg(v_1 \to v_2)) = 1 \implies e^+(v_1 \to v_2) = 0 \implies e(v_1) = 1$ și $e(v_2) = 0$.
+			\end{enumerate}
+			Modelul este $e(v_0) = 1, e(v_1) = 1, e(v_2) = 0$.
+
+		\item[\textbf{(iii)}] Pentru $\varphi_3 = v_5 \leftrightarrow (v_6 \wedge \neg v_5)$:
+			Echivalența este adevărată dacă ambele părți au aceeași valoare de adevăr.
+			Dacă presupunem $e(v_5) = 1$, atunci trebuie ca $e^+(v_6 \wedge \neg v_5) = 1$, ceea ce implică $e^+(\neg v_5) = 1 \implies e(v_5) = 0$ (contradicție).
+			Dacă presupunem $e(v_5) = 0$, atunci trebuie ca $e(v_6 \wedge \neg v_5) = 0$.
+			Cum $e^+(\neg v_5) = 1$, conjuncția $e^+(v_6 \wedge 1)$ este $0$ dacă și numai dacă $e(v_6) = 0$.
+			Deci, un model este $e(v_5) = 0, e(v_6) = 0$.
+	\end{itemize}
+\end{solutie}
+
+
+
 \newpage
 
 
@@ -387,12 +425,12 @@ prologul practic cauta o cale catre un adevar prin predicatele pe care le defini
 
 \begin{note}[Litere mari vs mici]
 	Se face distinctie intre parametrii cu litere mari si litere mici:
-    
-    Cele cu litere mici se refera la lucruri concrete (numere, stringuri, etc.).
-    
-    Cele cu litere mari sunt variabile si ele de fapt pot reprezenta orice termen in spate, fie numere, stringuri, liste etc.
 
-    In linia de comanda cand rulam programul daca dam variabile ca parametrii prolog ii va interpreta ca necunoscute si incearca sa gaseasca valori care respecta regulile pentru acele variabile.
+	Cele cu litere mici se refera la lucruri concrete (numere, stringuri, etc.).
+
+	Cele cu litere mari sunt variabile si ele de fapt pot reprezenta orice termen in spate, fie numere, stringuri, liste etc.
+
+	In linia de comanda cand rulam programul daca dam variabile ca parametrii prolog ii va interpreta ca necunoscute si incearca sa gaseasca valori care respecta regulile pentru acele variabile.
 \end{note}
 
 Mai jos aveti un exemplu de niste predicate simple (fapte) si un predicat definit prin reguli:
@@ -476,14 +514,14 @@ Se da o lista sub forma \texttt{[1, [2, [3, 4], 5], 6]} si trebuie sa o transfor
 my_flatten([], []). % Cazul de baza
 
 % Cazul cand elementul curent este o lista
-my_flatten([H|T], R) :- 
+my_flatten([H|T], R) :-
     is_list(H),
     my_flatten(H, Fh),
     my_flatten(T, Ft),
     append(Fh, Ft, R).
 
 % Cazul cand elementul curent nu este o lista
-my_flatten([H|T], [H|Tr]) :- 
+my_flatten([H|T], [H|Tr]) :-
     \+ is_list(H),  % Operatorul \+ este operatorul not
     my_flatten(T, Tr).
 \end{lstlisting}
