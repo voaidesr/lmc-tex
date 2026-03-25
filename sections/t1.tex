@@ -393,22 +393,22 @@ Deoarece în ambele cazuri rezultatele evaluărilor coincid, obținem că $e^+(\
 		\item[\textbf{(i)}] Pentru $\varphi_1 = (v_1 \vee v_2) \to \neg v_3$:
 			O implicație este adevărată dacă antecedentul este fals sau consecventul este adevărat.
 			Alegem un model $e$ în care $e(v_1) = 0$ și $e(v_2) = 0$. Atunci:
-			$$e^*((v_1 \vee v_2) \to \neg v_3) = (0 \vee 0) \to e^*(\neg v_3) = 0 \to e^*(\neg v_3) = 1$$
+			$$e^+((v_1 \vee v_2) \to \neg v_3) = (0 \vee 0) \to e^+(\neg v_3) = 0 \to e^+(\neg v_3) = 1$$
 			Deci, un model posibil este orice funcție $e$ cu $e(v_1) = 0, e(v_2) = 0$ (valorile pentru $v_3$ și restul variabilelor pot fi arbitrare).
 
 		\item[\textbf{(ii)}] Pentru $\varphi_2 = (v_0 \wedge v_1) \wedge \neg(v_1 \to v_2)$:
 			Pentru ca o conjuncție să fie adevărată, ambii termeni trebuie să fie adevărați.
 			\begin{enumerate}
-				\item $e(v_0 \wedge v_1) = 1 \implies e(v_0) = 1$ și $e(v_1) = 1$.
-				\item $e(\neg(v_1 \to v_2)) = 1 \implies e(v_1 \to v_2) = 0 \implies e(v_1) = 1$ și $e(v_2) = 0$.
+				\item $e^+(v_0 \wedge v_1) = 1 \implies e(v_0) = 1$ și $e(v_1) = 1$.
+				\item $e^+(\neg(v_1 \to v_2)) = 1 \implies e^+(v_1 \to v_2) = 0 \implies e(v_1) = 1$ și $e(v_2) = 0$.
 			\end{enumerate}
 			Modelul este $e(v_0) = 1, e(v_1) = 1, e(v_2) = 0$.
 
 		\item[\textbf{(iii)}] Pentru $\varphi_3 = v_5 \leftrightarrow (v_6 \wedge \neg v_5)$:
 			Echivalența este adevărată dacă ambele părți au aceeași valoare de adevăr.
-			Dacă presupunem $e(v_5) = 1$, atunci trebuie ca $e(v_6 \wedge \neg v_5) = 1$, ceea ce implică $e(\neg v_5) = 1 \implies e(v_5) = 0$ (contradicție).
+			Dacă presupunem $e(v_5) = 1$, atunci trebuie ca $e^+(v_6 \wedge \neg v_5) = 1$, ceea ce implică $e^+(\neg v_5) = 1 \implies e(v_5) = 0$ (contradicție).
 			Dacă presupunem $e(v_5) = 0$, atunci trebuie ca $e(v_6 \wedge \neg v_5) = 0$.
-			Cum $e(\neg v_5) = 1$, conjuncția $e(v_6 \wedge 1)$ este $0$ dacă și numai dacă $e(v_6) = 0$.
+			Cum $e^+(\neg v_5) = 1$, conjuncția $e^+(v_6 \wedge 1)$ este $0$ dacă și numai dacă $e(v_6) = 0$.
 			Deci, un model este $e(v_5) = 0, e(v_6) = 0$.
 	\end{itemize}
 \end{solutie}
@@ -514,14 +514,14 @@ Se da o lista sub forma \texttt{[1, [2, [3, 4], 5], 6]} si trebuie sa o transfor
 my_flatten([], []). % Cazul de baza
 
 % Cazul cand elementul curent este o lista
-my_flatten([H|T], R) :- 
+my_flatten([H|T], R) :-
     is_list(H),
     my_flatten(H, Fh),
     my_flatten(T, Ft),
     append(Fh, Ft, R).
 
 % Cazul cand elementul curent nu este o lista
-my_flatten([H|T], [H|Tr]) :- 
+my_flatten([H|T], [H|Tr]) :-
     \+ is_list(H),  % Operatorul \+ este operatorul not
     my_flatten(T, Tr).
 \end{lstlisting}
