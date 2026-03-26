@@ -51,5 +51,5 @@ jobs:
           cd student-repo
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add materials/tutoriat.pdf
+          git add Tutoriat/tutoriate.pdf
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update tutoriat.pdf from LaTeX source" && git push)
