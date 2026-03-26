@@ -5,7 +5,7 @@ on:
     branches:
       - test-latex-sync
     paths:
-      - '**.tex'
+      - '**/*.tex'
   workflow_dispatch: 
 
 jobs:
