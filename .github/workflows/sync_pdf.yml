@@ -37,7 +37,6 @@ jobs:
           repository: voaidesr/lmc
           token: ${{ secrets.SYNC_TOKEN }}
           path: student-repo
-          ref: test-latex-sync # <--- Target the test branch
 
       # 4. Move and rename
       - name: Update PDF in Student Repo
