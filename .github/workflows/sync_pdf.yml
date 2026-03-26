@@ -1,6 +1,11 @@
 name: Build and Sync PDF
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - test-latex-sync
+    paths:
+      - '**.tex'
 
 jobs:
   build_and_deploy:
@@ -25,25 +30,25 @@ jobs:
           name: compiled-pdf-preview
           path: master.pdf
 
-      # 3. Checkout the Student repository into a subfolder
-      # - name: Checkout Student Repo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: voaidesr/lmc # REPLACE THIS
-      #     token: ${{ secrets.SYNC_TOKEN }}
-      #     path: student-repo
+      - name: Checkout Student Repo
+        uses: actions/checkout@v4
+        with:
+          repository: voaidesr/lmc
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: student-repo
+          ref: test-latex-sync # <--- Target the test branch
 
-      # # 4. Move and rename the PDF
-      # - name: Update PDF in Student Repo
-      #   run: |
-      #     cp master.pdf student-repo/Tutoriat/tutoriate.pdf
+      # 4. Move and rename
+      - name: Update PDF in Student Repo
+        run: |
+          cp master.pdf student-repo/Tutoriat/tutoriate.pdf
 
-      # # 5. Commit and Push to the Student Repo
-      # - name: Commit and Push
-      #   run: |
-      #     cd student-repo
-      #     git config user.name "GitHub Action"
-      #     git config user.email "action@github.com"
-      #     git add Tutoriat/tutoriate.pdf
-      #     # Only commit if there are actually changes to the PDF
-      #     git diff --quiet && git diff --staged --quiet || (git commit -m "Update tutoriat.pdf from LaTeX source" && git push)
+      # 5. Commit and Push
+      - name: Commit and Push
+        run: |
+          cd student-repo
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add materials/tutoriat.pdf
+          git commit -m "Test sync"
+          git push origin test-latex-sync
