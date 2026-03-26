@@ -5,7 +5,7 @@ on:
     branches:
       - test-latex-sync
     paths:
-      - '**.tex'
+      - '**/*.tex'
   workflow_dispatch: 
 
 jobs:
@@ -50,6 +50,6 @@ jobs:
           cd student-repo
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add materials/tutoriat.pdf
+          git add Tutoriat/tutoriate.pdf
           git commit -m "Test sync"
           git push origin test-latex-sync
