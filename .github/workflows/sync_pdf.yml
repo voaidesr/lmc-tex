@@ -3,7 +3,7 @@ name: Build and Sync PDF
 on:
   push:
     branches:
-      - test-latex-sync
+      - main
     paths:
       - '**/*.tex'
   workflow_dispatch: 
@@ -45,11 +45,11 @@ jobs:
           cp master.pdf student-repo/Tutoriat/tutoriate.pdf
 
       # 5. Commit and Push
+      # Only commit if there are actually changes to the PDF
       - name: Commit and Push
         run: |
           cd student-repo
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add Tutoriat/tutoriate.pdf
-          git commit -m "Test sync"
-          git push origin test-latex-sync
+          git add materials/tutoriat.pdf
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update tutoriat.pdf from LaTeX source" && git push)
