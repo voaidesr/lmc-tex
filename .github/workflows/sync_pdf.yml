@@ -3,7 +3,7 @@ name: Build and Sync PDF
 on:
   push:
     branches:
-      - test-latex-sync
+      - main
     paths:
       - '**/*.tex'
   workflow_dispatch: 
@@ -37,7 +37,6 @@ jobs:
           repository: voaidesr/lmc
           token: ${{ secrets.SYNC_TOKEN }}
           path: student-repo
-          ref: test-latex-sync # <--- Target the test branch
 
       # 4. Move and rename
       - name: Update PDF in Student Repo
@@ -50,6 +49,6 @@ jobs:
           cd student-repo
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git add Tutoriat/tutoriate.pdf
-          git commit -m "Test sync"
-          git push origin test-latex-sync
+          git add materials/tutoriat.pdf
+          # Only commit if there are actually changes to the PDF
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update tutoriat.pdf from LaTeX source" && git push)
