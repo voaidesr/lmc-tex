@@ -120,6 +120,325 @@ $\varphi^{FND} = (\neg v_0 \land \neg v_1 \land v_2) \lor (\neg v_0 \land v_1 \l
 $\varphi^{FNC} = (v_0 \lor v_1 \lor v_2) \land (v_0 \lor \neg v_1 \lor v_2) \land (\neg v_0 \lor \neg v_1 \lor v_2)$
 
 \end{solutie}
+
+\section{Clauze și forma clauzală}
+
+Până acum am lucrat cu formule în FNC/FND. Pentru algoritmi de satisfiabilitate și pentru rezoluție, este util să tratăm formulele în FNC drept \textbf{mulțimi de clauze}. Asta simplifică mult calculele, pentru că ordinea literalilor nu contează, iar duplicatele se pot elimina imediat.
+
+\subsection{Definiții de bază}
+
+\begin{definition}
+	O \textbf{clauză} este o mulțime finită de literali:
+	\[
+		C = \{L_1, L_2, \dots, L_n\}.
+	\]
+
+	\noindent Dacă \(n = 0\), obținem \textbf{clauza vidă}, notată \( \square \), adică \( \square = \emptyset \).
+\end{definition}
+
+Dacă \(L\) este un literal, notăm literalul complementar cu \(L^c\):
+\[
+	L^c =
+	\begin{cases}
+		\neg v, & \text{dacă } L = v \\
+		v, & \text{dacă } L = \neg v
+	\end{cases}
+\]
+
+Intuitiv, o clauză nevidă se citește ca o disjuncție de literali. De exemplu:
+\[
+	\{v_1, \neg v_3, v_5\} \quad \leftrightarrow \quad v_1 \lor \neg v_3 \lor v_5.
+\]
+
+\begin{definition}
+	Fie \(C\) o clauză și \(e: V \to \{0,1\}\) o evaluare.
+	Spunem că \(e\) satisface clauza \(C\), și scriem \(e \models C\), dacă există un literal \(L \in C\) cu \(e \models L\).
+
+	\noindent Pentru o mulțime finită de clauze \(S = \{C_1, \dots, C_m\}\), scriem \(e \models S\) dacă \(e \models C_i\) pentru orice \(i\). Deci \(S\) se citește ca o conjuncție de clauze.
+\end{definition}
+
+\begin{definition}
+	Fie \(C\) o clauză și \(S\) o mulțime finită de clauze.
+	\begin{enumerate}
+		\item Spunem că \(C\) este \textbf{satisfiabilă} dacă există o evaluare \(e\) cu \(e \models C\). Spunem că \(C\) este \textbf{validă} dacă pentru orice evaluare \(e\), avem \(e \models C\).
+		\item Spunem că \(S\) este \textbf{satisfiabilă} dacă există o evaluare \(e\) cu \(e \models S\). Spunem că \(S\) este \textbf{validă} dacă pentru orice evaluare \(e\), avem \(e \models S\).
+	\end{enumerate}
+\end{definition}
+
+\begin{prop}
+    \noindent
+	\begin{enumerate}
+		\item Orice clauză nevidă este satisfiabilă.
+		\item Clauza vidă \( \square \) este nesatisfiabilă.
+		\item Dacă o clauză conține simultan \(L\) și \(L^c\), atunci este validă (trivială).
+	\end{enumerate}
+\end{prop}
+
+\subsection{Legătura dintre clauze și FNC}
+
+Pentru o formulă în FNC
+\[
+	\varphi = \bigwedge_{i=1}^{n}\left(\bigvee_{j=1}^{k_i} L_{i,j}\right),
+\]
+asociem forma clauzală
+\[
+	S_\varphi = \{C_1, \dots, C_n\}, \quad C_i = \{L_{i,1}, \dots, L_{i,k_i}\},
+\]
+unde într-o clauză păstrăm fiecare literal o singură dată.
+
+\begin{ex}
+	Fie
+	\[
+		\varphi = (v_1 \lor \neg v_2 \lor v_1)\land (\neg v_1 \lor v_3)\land (v_2).
+	\]
+	Să se scrie forma clauzală a formulei.
+\end{ex}
+
+\begin{solutie}
+	Transformăm fiecare paranteză într-o clauză și eliminăm duplicatele:
+	\[
+		S_\varphi = \{\{v_1, \neg v_2\}, \{\neg v_1, v_3\}, \{v_2\}\}.
+	\]
+
+	Observația importantă este că \( \varphi \) și \( S_\varphi \) sunt semantic echivalente: au exact aceleași modele.
+\end{solutie}
+
+\subsection{Conversia inversă: din clauze la formula $\varphi_S$}
+
+Conversia se face în doi pași: mai întâi transformăm fiecare clauză într-o disjuncție, apoi facem conjuncția tuturor acestor formule.
+
+\begin{definition}
+	Pentru o clauză \(C\), formula asociată \( \varphi_C \) este:
+	\begin{enumerate}
+		\item dacă \(C = \{L_1, \dots, L_n\}\), cu \(n \geq 1\), atunci
+		      \[
+			      \varphi_C := L_1 \lor \dots \lor L_n;
+		      \]
+		\item dacă \(C = \square\), atunci putem lua
+		      \[
+			      \varphi_{\square} := v_0 \land \neg v_0.
+		      \]
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}
+	Pentru o mulțime finită de clauze \(S\), formula asociată \( \varphi_S \) este:
+	\begin{enumerate}
+		\item dacă \(S = \{C_1, \dots, C_m\}\), cu \(m \geq 1\), atunci
+		      \[
+			      \varphi_S := \bigwedge_{i=1}^{m} \varphi_{C_i};
+		      \]
+		\item dacă \(S = \emptyset\), atunci putem lua
+		      \[
+			      \varphi_{\emptyset} := v_0 \lor \neg v_0.
+		      \]
+	\end{enumerate}
+\end{definition}
+
+\begin{note}
+	Formula \( \varphi_S \) nu este unică sintactic (ordinea literalilor/clauzelor poate diferi), dar toate variantele sunt echivalente semantic.
+\end{note}
+
+\begin{prop}
+	Pentru orice evaluare \(e\), avem:
+	\[
+		e \models S \quad \text{ddacă} \quad e \models \varphi_S.
+	\]
+\end{prop}
+
+\begin{ex}
+	Fie
+	\[
+		S = \{\{v_1, \neg v_2\}, \{v_3\}, \{\neg v_1, v_4\}\}.
+	\]
+	Scrieți formula \( \varphi_S \).
+\end{ex}
+
+\begin{solutie}
+	Asociem formulele pe clauze:
+	\[
+		\varphi_{C_1} = v_1 \lor \neg v_2, \quad \varphi_{C_2} = v_3, \quad \varphi_{C_3} = \neg v_1 \lor v_4.
+	\]
+	Deci:
+	\[
+		\varphi_S = (v_1 \lor \neg v_2)\land v_3 \land (\neg v_1 \lor v_4).
+	\]
+\end{solutie}
+
+\section{Rezoluția pe clauze}
+
+Rezoluția este o regulă de inferență specială pentru clauze. Ea este folosită ca să verificăm dacă un set de condiții este compatibil sau nu. Pe scurt, dacă două clauze se „bat cap în cap” pe aceeași variabilă (una conține \(L\), cealaltă conține \(L^c\)), eliminăm perechea contradictorie și păstrăm ce rămâne.
+
+Exemplu:
+\[
+	\{p, q\} \ \text{și}\ \{\neg p, r\} \ \Longrightarrow \ \{q, r\}.
+\]
+Am eliminat \(p\) și \(\neg p\), pentru că sunt complementare.
+
+Dacă, după mai mulți astfel de pași, ajungem la clauza vidă \( \square \), înseamnă că am obținut contradicție, deci clauzele inițiale nu pot fi satisfăcute împreună. Exact de aceea rezoluția este utilă în verificare automată, în solvere SAT și în mecanismul logic din PROLOG.
+
+\begin{definition}
+	Fie \(C_1, C_2\) două clauze. O clauză \(R\) se numește \textbf{rezolvent} al lor dacă există un literal \(L\) astfel încât
+	\[
+		L \in C_1, \quad L^c \in C_2, \quad R = (C_1 \setminus \{L\}) \cup (C_2 \setminus \{L^c\}).
+	\]
+\end{definition}
+
+\begin{ex}
+	Fie \(C_1 = \{v_1, \neg v_2, v_4\}\) și \(C_2 = \{v_2, v_3\}\).
+	Să se calculeze un rezolvent.
+\end{ex}
+
+\begin{solutie}
+	Alegem literalul \(L = \neg v_2\), deci \(L^c = v_2\).
+	\[
+		R = (C_1 \setminus \{\neg v_2\}) \cup (C_2 \setminus \{v_2\}) = \{v_1, v_4, v_3\}.
+	\]
+	Acesta este un rezolvent al lui \(C_1\) și \(C_2\).
+\end{solutie}
+
+\begin{prop}[Corectitudinea rezoluției]
+	Dacă dintr-o mulțime de clauze \(S\) se poate deriva clauza vidă \( \square \) prin pași de rezoluție, atunci \(S\) este nesatisfiabilă.
+\end{prop}
+
+\begin{ex}
+	Arătați prin rezoluție că
+	\[
+		S = \{\{v_1\}, \{\neg v_1, v_2\}, \{\neg v_2\}\}
+	\]
+	este nesatisfiabilă.
+\end{ex}
+
+\begin{solutie}
+	Notăm
+	\[
+		C_1=\{v_1\},\quad C_2=\{\neg v_1, v_2\},\quad C_3=\{\neg v_2\}.
+	\]
+	Rezolvăm \(C_1\) cu \(C_2\) după literalul \(v_1\):
+	\[
+		C_4 = \{v_2\}.
+	\]
+	Rezolvăm \(C_4\) cu \(C_3\) după literalul \(v_2\):
+	\[
+		C_5 = \square.
+	\]
+	Am derivat clauza vidă, deci \(S\) este nesatisfiabilă.
+\end{solutie}
+
+\section{Algoritmul Davis--Putnam (DP)}
+
+Algoritmul Davis--Putnam decide satisfiabilitatea unei mulțimi finite de clauze prin \textbf{eliminare de variabile} folosind rezolvenți.
+
+\subsection*{Algoritmul DP (scriere standard)}
+
+\noindent \textbf{Intrare:} \(S\) mulțime finită nevidă de clauze netriviale.
+\[
+	i := 1, \quad S_1 := S.
+\]
+
+\noindent \textit{Pi.1} Fie \(x_i\) o variabilă care apare în \(S_i\). Definim:
+\[
+	T_i^1 := \{C \in S_i \mid x_i \in C\}, \qquad
+	T_i^0 := \{C \in S_i \mid \neg x_i \in C\}.
+\]
+
+\noindent \textit{Pi.2} Dacă \(T_i^1 \neq \emptyset\) și \(T_i^0 \neq \emptyset\), atunci
+\[
+	U_i := \{(C_1 \setminus \{x_i\}) \cup (C_0 \setminus \{\neg x_i\}) \mid C_1 \in T_i^1,\ C_0 \in T_i^0\}.
+\]
+altfel \(U_i := \emptyset\).
+
+\noindent \textit{Pi.3} Definim:
+\[
+	S_{i+1}' := (S_i \setminus (T_i^0 \cup T_i^1)) \cup U_i,
+\]
+\[
+	S_{i+1} := S_{i+1}' \setminus \{C \in S_{i+1}' \mid C \text{ trivială}\}.
+\]
+
+\noindent \textit{Pi.4} Facem testul de oprire:
+\[
+	\text{dacă } S_{i+1} = \emptyset \text{ atunci } S \text{ este satisfiabilă;}
+\]
+\[
+	\text{altfel dacă } \square \in S_{i+1} \text{ atunci } S \text{ este nesatisfiabilă;}
+\]
+\[
+	\text{altfel } i := i+1 \text{ și revenim la Pi.1}.
+\]
+
+\subsection*{Explicația pașilor}
+
+Intuitiv, la fiecare iterație alegem o variabilă \(x_i\) și „o eliminăm” din sistem, păstrând doar informația relevantă pentru satisfiabilitate.
+
+\noindent \textbf{Pasul Pi.1.} Împărțim clauzele din \(S_i\) în două grupuri: cele care conțin \(x_i\) (acestea formează \(T_i^1\)) și cele care conțin \(\neg x_i\) (acestea formează \(T_i^0\)). Clauzele care nu conțin nici \(x_i\), nici \(\neg x_i\), rămân pe loc.
+
+\noindent \textbf{Pasul Pi.2.} Dacă avem clauze în ambele grupuri (\(T_i^1\) și \(T_i^0\)), construim toate rezolventele posibile între ele. Mulțimea acestor rezolvente este \(U_i\). Dacă unul dintre grupuri este vid, nu avem ce rezolva și luăm \(U_i=\emptyset\).
+
+\noindent \textbf{Pasul Pi.3.} Eliminăm din \(S_i\) toate clauzele care conțin \(x_i\) sau \(\neg x_i\), apoi adăugăm rezolventele din \(U_i\). După aceea, eliminăm clauzele triviale (cele care conțin simultan un literal și complementul său), deoarece nu ajută la decizie.
+
+\noindent \textbf{Pasul Pi.4.} Dacă după această simplificare obținem mulțimea vidă de clauze, problema este satisfiabilă. Dacă apare clauza vidă \( \square \), problema este nesatisfiabilă. În rest, repetăm aceeași procedură cu o nouă variabilă.
+
+\begin{ex}
+	Fie
+	\[
+		S = \{\{v_1, \neg v_3\}, \{v_2, v_1\}, \{v_2, \neg v_1, v_3\}\}.
+	\]
+	Să se aplice DP.
+\end{ex}
+
+\begin{solutie}
+	\noindent \(S = \{\{v_1, \neg v_3\}, \{v_2, v_1\}, \{v_2, \neg v_1, v_3\}\}\), \(i := 1\), \(S_1 := S\).
+
+	\noindent \textbf{P1.1} \(x_1 := v_3\), \(T_1^1 := \{\{v_2, \neg v_1, v_3\}\}\), \(T_1^0 := \{\{v_1, \neg v_3\}\}\).\\
+	\textbf{P1.2} \(U_1 := \{\{v_2, \neg v_1, v_1\}\}\).\\
+	\textbf{P1.3} \(S_2' := \{\{v_2, v_1\}, \{v_2, \neg v_1, v_1\}\}\), \(S_2 := \{\{v_2, v_1\}\}\).\\
+	\textbf{P1.4} \(i := 2\) and go to P2.1.
+
+	\vspace{0.2cm}
+	\noindent \textbf{P2.1} \(x_2 := v_2\), \(T_2^1 := \{\{v_2, v_1\}\}\), \(T_2^0 := \emptyset\).\\
+	\textbf{P2.2} \(U_2 := \emptyset\).\\
+	\textbf{P2.3} \(S_3 := \emptyset\).\\
+	\textbf{P2.4} \(S\) este satisfiabilă.
+\end{solutie}
+
+\begin{ex}
+	Fie
+	\[
+		S = \{\{\neg v_1, v_2, \neg v_4\}, \{\neg v_3, \neg v_2\}, \{v_1, v_3\}, \{v_1\}, \{v_3\}, \{v_4\}\}.
+	\]
+	Să se aplice DP și să se decidă satisfiabilitatea.
+\end{ex}
+
+\begin{solutie}
+	\noindent \(S = \{\{\neg v_1, v_2, \neg v_4\}, \{\neg v_3, \neg v_2\}, \{v_1, v_3\}, \{v_1\}, \{v_3\}, \{v_4\}\}\),\\
+	\noindent \(i := 1\), \(S_1 := S\).
+
+	\noindent \textbf{P1.1} \(x_1 := v_1\), \(T_1^1 := \{\{v_1, v_3\}, \{v_1\}\}\), \(T_1^0 := \{\{\neg v_1, v_2, \neg v_4\}\}\).\\
+	\textbf{P1.2} \(U_1 := \{\{v_3, v_2, \neg v_4\}, \{v_2, \neg v_4\}\}\).\\
+	\textbf{P1.3} \(S_2 := \{\{\neg v_3, \neg v_2\}, \{v_3\}, \{v_4\}, \{v_3, v_2, \neg v_4\}, \{v_2, \neg v_4\}\}\).\\
+	\textbf{P1.4} \(i := 2\) and go to P2.1.
+
+	\vspace{0.2cm}
+	\noindent \textbf{P2.1} \(x_2 := v_2\), \(T_2^1 := \{\{v_3, v_2, \neg v_4\}, \{v_2, \neg v_4\}\}\),\\
+	\noindent \(T_2^0 := \{\{\neg v_3, \neg v_2\}\}\).\\
+	\textbf{P2.2} \(U_2 := \{\{v_3, \neg v_4, \neg v_3\}, \{\neg v_4, \neg v_3\}\}\).\\
+	\textbf{P2.3} \(S_3 := \{\{v_3\}, \{v_4\}, \{\neg v_4, \neg v_3\}\}\).\\
+	\textbf{P2.4} \(i := 3\) and go to P3.1.
+
+	\vspace{0.2cm}
+	\noindent \textbf{P3.1} \(x_3 := v_3\), \(T_3^1 := \{\{v_3\}\}\), \(T_3^0 := \{\{\neg v_4, \neg v_3\}\}\).\\
+	\textbf{P3.2} \(U_3 := \{\{\neg v_4\}\}\).\\
+	\textbf{P3.3} \(S_4 := \{\{v_4\}, \{\neg v_4\}\}\).\\
+	\textbf{P3.4} \(i := 4\) and go to P4.1.
+
+	\vspace{0.2cm}
+	\noindent \textbf{P4.1} \(x_4 := v_4\), \(T_4^1 := \{\{v_4\}\}\), \(T_4^0 := \{\{\neg v_4\}\}\).\\
+	\textbf{P4.2} \(U_4 := \{\square\}\).\\
+	\textbf{P4.3} \(S_5 := \{\square\}\).\\
+	\textbf{P4.4} \(S\) este nesatisfiabilă.
+\end{solutie}
+
 \newpage
 
 \section{Prolog findall/setof/bagof}
