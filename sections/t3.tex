@@ -1,3 +1,125 @@
+\chapter{Clauze, Rezoluție și Prolog}
+
+\section{Continuare FNC și FND}
+
+Exercițiile de la forme normale sunt foarte algoritmice și există foarte mare șansă să aveți la examen acest tip de exercițiu. Așa că e bine să vă obișnuiți să lucrați cu ele. Există două tipuri de exerciții: transformarea unei formule în FNC/FND prin transformare sintactică (adică al doilea algoritm prezentat în capitolul anterior) și prin aducerea la funcție booleană (adică compunerea tabelului de adevăr a formululei și aplicarea primului algoritm din capitolul anterior).
+
+\begin{ex}
+Să se aducă următoarele formule la cele două forme normale prin transformări sintactice:
+\begin{enumerate}
+    \item[(i)] $((v_0 \rightarrow v_1) \land v_1) \rightarrow v_0$;
+    \item[(ii)] $(v_1 \lor \neg v_4) \rightarrow (\neg v_2 \rightarrow v_3)$.
+\end{enumerate}
+\end{ex}
+
+\begin{solutie}
+
+Vom folosi algoritmul detaliat în \ref{alg2:fn}.
+
+\vspace{0.3cm}
+\noindent \textbf{Pentru formula (i):} $\alpha = ((v_0 \rightarrow v_1) \land v_1) \rightarrow v_0$
+
+\begin{itemize}
+    \item \textit{Pasul 1 (Eliminarea implicațiilor):}
+          Aplicăm regula $\varphi \rightarrow \psi \sim \neg \varphi \lor \psi$:
+          \[ \alpha \sim \neg ((\neg v_0 \lor v_1) \land v_1) \lor v_0 \]
+    \item \textit{Pasul 2 (Aplicarea legilor De Morgan și absorbția):}
+          Introducem negația în paranteză folosind De Morgan:
+          \[ \alpha \sim (\neg (\neg v_0 \lor v_1) \lor \neg v_1) \lor v_0 \]
+          Aplicăm din nou De Morgan pentru termenul $\neg (\neg v_0 \lor v_1)$:
+          \[ \alpha \sim ((v_0 \land \neg v_1) \lor \neg v_1) \lor v_0 \]
+    \item \textit{Pasul 3 (Aplicarea distributivității și a idempotenței):}
+	      Aplicăm distributivitatea disjuncției față de conjuncție pentru subformula $((v_0 \land \neg v_1) \lor \neg v_1)$:
+	      \[ \alpha \sim ((v_0 \lor \neg v_1) \land (\neg v_1 \lor \neg v_1)) \lor v_0 \]
+	      Aplicăm legea idempotenței pentru disjuncție ($\neg v_1 \lor \neg v_1 \sim \neg v_1$):
+	      \[ \alpha \sim ((v_0 \lor \neg v_1) \land \neg v_1) \lor v_0 \]
+
+	\item \textit{Pasul 4 (A doua aplicare a distributivității):}
+	      Pentru a finaliza aducerea la forma normală, distribuim disjuncția $(\lor v_0)$ peste conjuncția rămasă:
+	      \[ \alpha \sim ((v_0 \lor \neg v_1) \lor v_0) \land (\neg v_1 \lor v_0) \]
+	      Folosind comutativitatea, asociativitatea și idempotența ($v_0 \lor v_0 \sim v_0$) în prima paranteză, obținem:
+	      \[ \alpha \sim (v_0 \lor \neg v_1) \land (v_0 \lor \neg v_1) \]
+	      În final, aplicăm idempotența pentru întreaga expresie ($A \land A \sim A$), rezultând o formulă care e atât în FNC, cât și
+          în FND:
+	      \[ \alpha \sim v_0 \lor \neg v_1 \]
+\end{itemize}
+
+
+\noindent \textbf{Pentru formula (ii):} $\beta = (v_1 \lor \neg v_4) \rightarrow (\neg v_2 \rightarrow v_3)$
+
+\begin{itemize}
+    \item \textit{Pasul 1 (Eliminarea implicațiilor):}
+          Mai întâi eliminăm implicația din paranteza dreaptă:
+          \[ \beta \sim (v_1 \lor \neg v_4) \rightarrow (\neg\neg v_2 \lor v_3) \sim (v_1 \lor \neg v_4) \rightarrow (v_2 \lor v_3) \]
+          Apoi eliminăm implicația principală:
+          \[ \beta \sim \neg (v_1 \lor \neg v_4) \lor (v_2 \lor v_3) \]
+    \item \textit{Pasul 2 (Aplicarea legilor De Morgan):}
+          \[ \beta \sim (\neg v_1 \land \neg\neg v_4) \lor v_2 \lor v_3 \sim (\neg v_1 \land v_4) \lor v_2 \lor v_3 \]
+          În acest stadiu, formula este deja o disjuncție de conjuncții, așadar avem forma FND.
+    \item \textit{Pasul 3 (Aducerea la FNC prin distributivitate):}
+          Pentru a obține FNC, distribuim disjuncția $(\lor v_2 \lor v_3)$ peste conjuncția $(\neg v_1 \land v_4)$:
+          \[ \beta \sim (\neg v_1 \lor v_2 \lor v_3) \land (v_4 \lor v_2 \lor v_3) \]
+\end{itemize}
+
+
+\end{solutie}
+
+
+\begin{ex}
+\textbf Să se aducă formula $\varphi = (v_0 \rightarrow v_1) \rightarrow v_2$ la cele două forme normale trecându-se prin funcția booleană asociată (i.e. metoda tabelului).
+\end{ex}
+
+\begin{solutie}
+Construim tabelul de adevăr pentru funcția booleană asociată formulei $\varphi$. Variabilele sunt $v_0, v_1, v_2$.
+
+\vspace{0.3cm}
+
+\begin{minipage}[c]{0.35\textwidth}
+	\renewcommand{\arraystretch}{1.2}
+	\begin{tabular}{c|c|c|c|c}
+		$v_0$ & $v_1$ & $v_2$ & $v_0 \to v_1$ & $\varphi$ \\
+		\hline
+		0 & 0 & 0 & 1 & \textcolor{blue}{0} \\
+		0 & 0 & 1 & 1 & \textcolor{magenta}{1} \\
+		0 & 1 & 0 & 1 & \textcolor{blue}{0} \\
+		0 & 1 & 1 & 1 & \textcolor{magenta}{1} \\
+		1 & 0 & 0 & 0 & \textcolor{magenta}{1} \\
+		1 & 0 & 1 & 0 & \textcolor{magenta}{1} \\
+		1 & 1 & 0 & 1 & \textcolor{blue}{0} \\
+		1 & 1 & 1 & 1 & \textcolor{magenta}{1} \\
+	\end{tabular}
+\end{minipage}
+\begin{minipage}[c]{0.6\textwidth}
+	\begin{align*}
+		\textcolor{blue}{D_1}    & = \textcolor{blue}{v_0 \lor v_1 \lor v_2} \\
+		\textcolor{magenta}{C_1} & = \textcolor{magenta}{\neg v_0 \land \neg v_1 \land v_2} \\
+		\textcolor{blue}{D_2}    & = \textcolor{blue}{v_0 \lor \neg v_1 \lor v_2} \\
+		\textcolor{magenta}{C_2} & = \textcolor{magenta}{\neg v_0 \land v_1 \land v_2} \\
+		\textcolor{magenta}{C_3} & = \textcolor{magenta}{v_0 \land \neg v_1 \land \neg v_2} \\
+		\textcolor{magenta}{C_4} & = \textcolor{magenta}{v_0 \land \neg v_1 \land v_2} \\
+		\textcolor{blue}{D_3}    & = \textcolor{blue}{\neg v_0 \lor \neg v_1 \lor v_2} \\
+		\textcolor{magenta}{C_5} & = \textcolor{magenta}{v_0 \land v_1 \land v_2}
+	\end{align*}
+\end{minipage}
+
+\vspace{0.5cm}
+
+\noindent Extragem \textbf{Forma Normală Disjunctivă (FND)} prin disjuncția conjuncțiilor $C_i$ corespunzătoare liniilor unde $\varphi = \textcolor{magenta}{1}$:
+
+\vspace{0.2cm}
+\noindent $\varphi^{FND} = C_1 \lor C_2 \lor C_3 \lor C_4 \lor C_5$ \\
+$\varphi^{FND} = (\neg v_0 \land \neg v_1 \land v_2) \lor (\neg v_0 \land v_1 \land v_2) \lor (v_0 \land \neg v_1 \land \neg v_2) \lor (v_0 \land \neg v_1 \land v_2) \lor (v_0 \land v_1 \land v_2)$
+
+\vspace{0.5cm}
+
+\noindent Extragem \textbf{Forma Normală Conjunctivă (FNC)} prin conjuncția disjuncțiilor $D_i$ corespunzătoare liniilor unde $\varphi = \textcolor{blue}{0}$ (se neagă valoarea de adevăr a variabilelor de pe linie):
+
+
+\vspace{0.2cm}
+\noindent $\varphi^{FNC} = D_1 \land D_2 \land D_3$ \\
+$\varphi^{FNC} = (v_0 \lor v_1 \lor v_2) \land (v_0 \lor \neg v_1 \lor v_2) \land (\neg v_0 \lor \neg v_1 \lor v_2)$
+
+\end{solutie}
 \newpage
 
 \section{Prolog findall/setof/bagof}
@@ -22,7 +144,7 @@ angajat(alex, it). % Duplicat intentionat
 
 \subsection*{findall(sablon, scop, listaRezultat)}
 Este cel mai simplu si intuitiv si cel mai des folosit in practica. Face exact ce spune:
-gaseste toate solutiile si le pune intr-o lista. 
+gaseste toate solutiile si le pune intr-o lista.
 
 Pastreaza duplicate, nu sorteaza si \textbf{ignora variabilele libere}.
 
@@ -45,7 +167,7 @@ Cand nu gaseste nimic returneaza o lista goala (nu da false).
 
 \subsection*{bagof(sablon, scop, listaRezultat)}
 Predicatul \texttt{bagof} este putin mai inteligent in sensul ca \textbf{grupeaza} rezultatele in functie de variabilele
-libere (variabilele care sunt in \texttt{scop} dar nu sunt in \texttt{sablon}). 
+libere (variabilele care sunt in \texttt{scop} dar nu sunt in \texttt{sablon}).
 
 Pastreaza duplicate, nu sorteaza, si daca exista variabile libere, Prolog \textbf{va returna mai multe liste},
 cate una pentru fiecare valoare posibila a variabilei libere.
@@ -87,7 +209,7 @@ Putem face:
 \subsection*{setof(sablon, scop, listaRezultat)}
 Predicatul \texttt{setof} este cel mai strict. El modeleaza o multime matematica (un set), si, in general, elementele unei multimi sunt ordonate.
 
-\textbf{Elimina} duplicate, \textbf{sorteaza} elementele (alfabetic sau numeric), si similar cu bagof, 
+\textbf{Elimina} duplicate, \textbf{sorteaza} elementele (alfabetic sau numeric), si similar cu bagof,
 grupeaza dupa variabilele libere si esueaza cand nu gaseste nimic
 
 \textbf{Exemple:}
@@ -154,7 +276,7 @@ inventar(jaina, potiune_mana, 15).
 inventar(jaina, potiune_mana, 15). % Are doua potiuni
 \end{lstlisting}
 
-Definiti predicatul \texttt{avereJucator/2} care primeste un jucator ca prim parametru 
+Definiti predicatul \texttt{avereJucator/2} care primeste un jucator ca prim parametru
 si in al doilea parametru se afla aurul total pe care il are acel jucator.
 
 Rulati si confirmati:
@@ -233,7 +355,7 @@ In aceasta solutie daca rulam:
 
 \newpage
 
-De ce? Pentru ca \texttt{bagof} va grupa dupa J cand este variabila libera si 
+De ce? Pentru ca \texttt{bagof} va grupa dupa J cand este variabila libera si
 cand verifica va lua toate gruparile posibile si forma listele:
 \texttt{(arthas, [150, 10, 50])} si \texttt{(jaina, [200, 15, 15])} si va lua jucatorul
 care are suma listei egala cu 210.
@@ -270,14 +392,14 @@ Rulati si confirmati:
 \subsubsection*{Solutie:}
 
 \begin{lstlisting}
-vecin(X1,Y1, X2,Y2) :- 
+vecin(X1,Y1, X2,Y2) :-
     between(-1, 1, Dx),
     between(-1, 1, Dy),
     \+ (Dx = 0, Dy = 0), % Sau (Dx =\= 0; Dy =\= 0)
     X2 is X1 + Dx,
     Y2 is Y1 + Dy.
 
-mine_vecine(X, Y, R) :- 
+mine_vecine(X, Y, R) :-
     findall((Vx,Vy), (vecin(X,Y, Vx,Vy), mina(Vx,Vy)), L),
     length(L, R).
 \end{lstlisting}
