@@ -1,0 +1,352 @@
+\newpage
+
+\section{Prolog findall/setof/bagof}
+
+In prolog, in mod normal, cand pui un query, sistemul iti returneaza prima solutie
+si continua cautarea pentru mai multe solutii doar daca vrem noi.
+
+Predicatele \texttt{findall}, \texttt{bagof}, \texttt{setof} sunt folosite atunci cand
+vrem sa colectam \textbf{toate} solutiile intr-o lista.
+
+Diferentele intre ele stau in modul in care trateaza duplicatele, sortarea, lipsa solutiilor si,
+cel mai important, variabilele libere.
+
+Vom analiza cum se comporta fiecare incepand cu urmatoarele fapte simple:
+
+\begin{lstlisting}
+angajat(dana, it).
+angajat(alex, it).
+angajat(maria, hr).
+angajat(alex, it). % Duplicat intentionat
+\end{lstlisting}
+
+\subsection*{findall(sablon, scop, listaRezultat)}
+Este cel mai simplu si intuitiv si cel mai des folosit in practica. Face exact ce spune:
+gaseste toate solutiile si le pune intr-o lista. 
+
+Pastreaza duplicate, nu sorteaza si \textbf{ignora variabilele libere}.
+
+Cand nu gaseste nimic returneaza o lista goala (nu da false).
+
+\textbf{Exemple:}
+
+\texttt{?- findall(Nume, angajat(Nume, pr), R).}
+
+\texttt{R = [].}
+
+\vspace{\baselineskip}
+
+\texttt{?- findall(Nume, angajat(Nume, Dept), R).}
+
+\texttt{R = [dana, alex, maria, alex].}
+
+\textit{Se observa cum a ignorat complet variabila libera Dept, a pastrat duplicatul 'alex' si nu a sortat nimic.}
+
+
+\subsection*{bagof(sablon, scop, listaRezultat)}
+Predicatul \texttt{bagof} este putin mai inteligent in sensul ca \textbf{grupeaza} rezultatele in functie de variabilele
+libere (variabilele care sunt in \texttt{scop} dar nu sunt in \texttt{sablon}). 
+
+Pastreaza duplicate, nu sorteaza, si daca exista variabile libere, Prolog \textbf{va returna mai multe liste},
+cate una pentru fiecare valoare posibila a variabilei libere.
+
+Cand nu gaseste nimic \textbf{esueaza} (returneaza false).
+
+\textbf{Exemple:}
+
+\texttt{?- bagof(Nume, angajat(Nume, pr), R).}
+
+\texttt{false.}
+
+\vspace{\baselineskip}
+
+\texttt{?- bagof(Nume, angajat(Nume, Dept), R).}
+
+\texttt{Dept = hr,}
+
+\texttt{R = [maria] ;}
+
+\texttt{Dept = it,}
+
+\texttt{R = [dana, alex, alex].}
+
+\newpage
+
+De aici putem sa incepem sa si combinam, de exemplu daca vrem o lista de tupluri de tipul:
+
+\texttt{[(numeDepartament, [angajati in departament])]}
+
+Putem face:
+
+\texttt{?- findall((Dept, L), bagof(Nume, angajat(Nume, Dept), L), R).}
+
+\texttt{R = [(hr, [maria]), (it, [dana, alex, alex])].}
+
+
+
+\subsection*{setof(sablon, scop, listaRezultat)}
+Predicatul \texttt{setof} este cel mai strict. El modeleaza o multime matematica (un set), si, in general, elementele unei multimi sunt ordonate.
+
+\textbf{Elimina} duplicate, \textbf{sorteaza} elementele (alfabetic sau numeric), si similar cu bagof, 
+grupeaza dupa variabilele libere si esueaza cand nu gaseste nimic
+
+\textbf{Exemple:}
+
+\texttt{?- setof(Nume, angajat(Nume, pr), R).}
+
+\texttt{false.}
+
+\vspace{\baselineskip}
+
+\texttt{?- setof(Nume, angajat(Nume, Dept), R).}
+
+\texttt{Dept = hr,}
+
+\texttt{R = [maria] ;}
+
+\texttt{Dept = it,}
+
+\texttt{R = [alex, dana].}
+
+\textit{Se observa cum a eliminat duplicatul 'alex' si a sortat listele.}
+
+\vspace{\baselineskip}
+
+\texttt{?- findall((Dept, L), setof(Nume, angajat(Nume, Dept), L), R).}
+
+\texttt{R = [(hr, [maria]), (it, [alex, dana])].}
+
+
+
+
+\subsection*{Operatorul \^{}}
+
+Operatorul \texttt{\^{}} este folosit in \texttt{setof} si \texttt{bagof} sa ignore o variabila libera data (similar cu \texttt{findall}
+dar putem controla ce variabile libere sunt ignorate).
+
+\textbf{Exemple:}
+
+\texttt{?- setof(Nume, Dept\^{}angajat(Nume, Dept), R).}
+
+\texttt{R = [alex, dana, maria].}
+
+In cazul in care avem mai multe variabile libere pe care vrem sa le ignoram putem face:
+
+\texttt{?- setof(Nume, Firma\^{}Dept\^{}lucreaza(Nume, Oras, Firma, Dept), R).}
+
+
+
+
+
+\subsection*{Exercitii rezolvate}
+
+\subsubsection*{Exercitiul 1}
+
+Avand ca si context urmatoarele fapte:
+
+\begin{lstlisting}
+% inventar(Jucator, Obiect, ValoareAur).
+inventar(arthas, sabie, 150).
+inventar(arthas, potiune_viata, 10).
+inventar(arthas, scut, 50).
+inventar(jaina, toiag, 200).
+inventar(jaina, potiune_mana, 15).
+inventar(jaina, potiune_mana, 15). % Are doua potiuni
+\end{lstlisting}
+
+Definiti predicatul \texttt{avereJucator/2} care primeste un jucator ca prim parametru 
+si in al doilea parametru se afla aurul total pe care il are acel jucator.
+
+Rulati si confirmati:
+
+\texttt{?- avere\_jucator(arthas, R).}
+
+\texttt{R = 210.}
+
+\texttt{?- avere\_jucator(jaina, R).}
+
+\texttt{R = 230.}
+
+\textbf{Atentie!} Ce credeti ca se intampla daca rulam:
+
+\texttt{?- avere\_jucator(X, 210).}
+
+\texttt{?- avere\_jucator(X, 440).}
+
+\texttt{?- avere\_jucator(X, R).}
+
+
+\subsubsection*{Solutii:}
+
+\subsubsection*{Solutia 1 findall:}
+
+\begin{lstlisting}
+avere_jucator(J, R) :-
+    findall(V, inventar(J, _, V), L),
+    suma_lista(L, R).
+\end{lstlisting}
+
+In aceasta solutie daca rulam:
+
+\texttt{?- avere\_jucator(X, 210).}
+
+\texttt{false.}
+
+\texttt{?- avere\_jucator(X, 440).}
+
+\texttt{true.}
+
+\texttt{?- avere\_jucator(X, R).}
+
+\texttt{R = 440.}
+
+De ce? Pentru ca, daca ii dam sa caute jucatorul, atunci J o sa fie o variabila libera. In \texttt{findall}, variabilele libere sunt ignorate.
+Prin urmare, linia cu \texttt{findall(V, inventar(J, \_, V), L),} va returna mereu lista cu toate valorile: \texttt{[150, 10, 50, 200, 15, 15]} si suma va fi 440.
+
+
+\subsubsection*{Solutia 2 bagof:}
+\begin{lstlisting}
+avere_jucator(J, R) :-
+    bagof(V, Obj^inventar(J, Obj, V), L),
+    suma_lista(L, R).
+\end{lstlisting}
+
+In aceasta solutie daca rulam:
+
+\texttt{?- avere\_jucator(X, 210).}
+
+\texttt{X = arthas.}
+
+\texttt{?- avere\_jucator(X, 440).}
+
+\texttt{false.}
+
+\texttt{?- avere\_jucator(X, R).}
+
+\texttt{X = arthas,}
+
+\texttt{R = 210 ;}
+
+\texttt{X = jaina,}
+
+\texttt{R = 230.}
+
+\newpage
+
+De ce? Pentru ca \texttt{bagof} va grupa dupa J cand este variabila libera si 
+cand verifica va lua toate gruparile posibile si forma listele:
+\texttt{(arthas, [150, 10, 50])} si \texttt{(jaina, [200, 15, 15])} si va lua jucatorul
+care are suma listei egala cu 210.
+
+
+\subsubsection*{Exercitiul 2}
+
+Avand ca si context urmatoarele fapte:
+\begin{lstlisting}
+% mina(X, Y).
+mina(1, 1).
+mina(1, 3).
+mina(2, 2).
+mina(3, 1).
+\end{lstlisting}
+
+Definiti predicatul \texttt{mine\_vecine/3} care primeste coordonatele X si Y (primii doi parametrii) si returneaza numarul de mine vecine prin al treilea parametru.
+
+Rulati si confirmati:
+
+\texttt{?- mine\_vecine(1, 2, R).}
+
+\texttt{R = 3.}
+
+\texttt{?- mine\_vecine(1, 4, R).}
+
+\texttt{R = 1.}
+
+\texttt{?- mine\_vecine(1, 5, R).}
+
+\texttt{R = 0.}
+
+
+\subsubsection*{Solutie:}
+
+\begin{lstlisting}
+vecin(X1,Y1, X2,Y2) :- 
+    between(-1, 1, Dx),
+    between(-1, 1, Dy),
+    \+ (Dx = 0, Dy = 0), % Sau (Dx =\= 0; Dy =\= 0)
+    X2 is X1 + Dx,
+    Y2 is Y1 + Dy.
+
+mine_vecine(X, Y, R) :- 
+    findall((Vx,Vy), (vecin(X,Y, Vx,Vy), mina(Vx,Vy)), L),
+    length(L, R).
+\end{lstlisting}
+
+
+\newpage
+
+\subsection*{Exercitii propuse:}
+\subsubsection*{Exercitiul 1}
+Definiti predicatul \texttt{genAllBetween/3} care genereaza toate numerele dintre A si B (primii doi parametrii) si pune rezultatul ca o lista in ultimul parametru. (Hint: folositi \texttt{between/3} si \texttt{findall/3})
+
+Rulati si confirmati:
+
+\texttt{?-genAllBetween(4, 10, R).}
+
+\texttt{R = [4, 5, 6, 7, 8, 9, 10]}
+
+\texttt{?-genAllBetween(4, 4, R).}
+
+\texttt{R = [4]}
+
+\texttt{?-genAllBetween(5, 4, R).}
+
+\texttt{R = []}
+
+
+
+
+\subsubsection*{Exercitiul 2}
+Definiti predicatul \texttt{aboveMean/2} care gaseste elementele mai mari decat media tuturor elementelor din prima lista si le pune in a doua lista. Implementati folosind una dintre predicatele \texttt{findall/3}, \texttt{bagof/3} sau \texttt{setof/3}
+
+Rulati si confirmati:
+
+\texttt{?-aboveMean([3, 7, 2, 8, 5, 10], R).}
+
+\texttt{R = [7, 8, 10].}
+
+\texttt{?-aboveMean([1, 1, 1, 1, 1, 10], R).}
+
+\texttt{R = [10].}
+
+
+
+\subsubsection*{Exercitiul 3}
+Avand ca si context urmatoarele fapte:
+\begin{lstlisting}
+% nota(Student, Materie, Nota).
+nota(andrei, mate1, 8).
+nota(andrei, fizica, 4).
+nota(andrei, programare1, 10).
+nota(maria, mate1, 6).
+nota(maria, fizica, 7).
+nota(maria, programare1, 10).
+
+% cerinta(MaterieDorita, MaterieCeTrebuiePromovata).
+cerinta(mate2, mate1).
+cerinta(programare2, programare1).
+cerinta(robotica, programare1).
+cerinta(robotica, fizica). % Robotica are doua cerinte
+\end{lstlisting}
+
+Definiti predicatul \texttt{meterii\_eligibile/2} care primeste numele unui student ca primul parametru si in al doilea parametru se afla lista materiilor la care poate sa se inscrie.
+
+Rulati si confirmati:
+
+\texttt{?- materii\_eligibile(andrei, X).}
+
+\texttt{X = [mate2, programare2].}
+
+\texttt{?- materii\_eligibile(maria, X).}
+
+\texttt{X = [mate2, programare2, robotica].}
