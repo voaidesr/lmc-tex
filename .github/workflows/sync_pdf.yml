@@ -1,0 +1,54 @@
+name: Build and Sync PDF
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tex'
+  workflow_dispatch: 
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the LaTeX repository
+      - name: Checkout LaTeX Repo
+        uses: actions/checkout@v4
+
+      # 2. Compile the LaTeX file
+      # This uses an official/popular action to handle the TeX Live environment
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: master.tex
+          # If you need specific latexmk arguments, add them here:
+          # args: "-pdf -interaction=nonstopmode -halt-on-error"
+
+      - name: Upload PDF for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-pdf-preview
+          path: master.pdf
+
+      - name: Checkout Student Repo
+        uses: actions/checkout@v4
+        with:
+          repository: voaidesr/lmc
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: student-repo
+
+      # 4. Move and rename
+      - name: Update PDF in Student Repo
+        run: |
+          cp master.pdf student-repo/Tutoriat/tutoriate.pdf
+
+      # 5. Commit and Push
+      # Only commit if there are actually changes to the PDF
+      - name: Commit and Push
+        run: |
+          cd student-repo
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add Tutoriat/tutoriate.pdf
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update tutoriat.pdf from LaTeX source" && git push)
