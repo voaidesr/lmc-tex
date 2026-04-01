@@ -176,6 +176,7 @@
 
 \declaretheorem[style=thmgreenbox, name=Definition]{definition}
 \declaretheorem[style=thmbluebox, numbered=no, name=Example]{eg}
+\declaretheorem[style=thmredbox, numbered=no, name=Exercițiu]{ex}
 \declaretheorem[style=thmredbox, name=Proposition]{prop}
 \declaretheorem[style=thmredbox, name=Theorem]{theorem}
 \declaretheorem[style=thmredbox, name=Lemma]{lemma}
@@ -183,6 +184,21 @@
 
 \declaretheorem[style=thmproofbox, name=Proof]{replacementproof}
 \renewenvironment{proof}[1][\proofname]{\vspace{-10pt}\begin{replacementproof}}{\end{replacementproof}}
+
+\declaretheorem[
+	style=thmproofbox,
+	name=Soluție,
+	numbered=no
+]{tmpsolutie}
+
+% 2. Create the environment with a small negative vspace to align it 
+% nicely with the problem statement (matching your proof setup)
+\newenvironment{solutie}[1][]{
+	\vspace{-10pt}
+	\begin{tmpsolutie}
+		}{
+	\end{tmpsolutie}
+}
 
 
 \declaretheorem[style=thmexplanationbox, name=Proof]{tmpexplanation}
@@ -301,44 +317,44 @@
 \makeatletter
 % \idstyle correctly inspects the listings internal token for A-Z and _
 \newcommand*\idstyle{%
-  \expandafter\id@style\the\lst@token\relax
+	\expandafter\id@style\the\lst@token\relax
 }
 \def\id@style#1#2\relax{%
-  \ifcat\relax\noexpand#1\relax 
-  \else
-    \ifnum`#1>64 % ASCII > 64
-      \ifnum`#1<91 % ASCII < 91 (A-Z)
-        \color{varorange}%
-      \fi
-    \fi
-    \ifnum`#1=95 % ASCII = 95 (_)
-      \color{varorange}%
-    \fi
-  \fi
+	\ifcat\relax\noexpand#1\relax
+	\else
+	\ifnum`#1>64 % ASCII > 64
+	\ifnum`#1<91 % ASCII < 91 (A-Z)
+	\color{varorange}%
+	\fi
+	\fi
+	\ifnum`#1=95 % ASCII = 95 (_)
+	\color{varorange}%
+	\fi
+	\fi
 }
 \makeatother
 
 % Setup the Prolog style
 \lstset{
-	language=Prolog,
-	basicstyle=\ttfamily\small,
-	keywordstyle=\color{keywordblue}\bfseries,
-	commentstyle=\color{commentgreen}\itshape,
-	stringstyle=\color{stringpurple},
-	identifierstyle=\idstyle, 
-	alsoletter={_},           
-	numbers=left,
-	numberstyle=\tiny\color{gray},
-	stepnumber=1,
-	frame=single,
-	breaklines=true,
-	showstringspaces=false,
-	% The asterisk (*) ensures these replacements DO NOT happen inside comments/strings
-	literate=*{:-}{{\textcolor{keywordblue}{:-}}}2
-            %   {(}{{\textcolor{parenthyellow}{(}}}1
-            %   {)}{{\textcolor{parenthyellow}{)}}}1
-              {[}{{\textcolor{bracketpink}{[}}}1
-              {]}{{\textcolor{bracketpink}{]}}}1
+language=Prolog,
+basicstyle=\ttfamily\small,
+keywordstyle=\color{keywordblue}\bfseries,
+commentstyle=\color{commentgreen}\itshape,
+stringstyle=\color{stringpurple},
+identifierstyle=\idstyle,
+alsoletter={_},
+numbers=left,
+numberstyle=\tiny\color{gray},
+stepnumber=1,
+frame=single,
+breaklines=true,
+showstringspaces=false,
+% The asterisk (*) ensures these replacements DO NOT happen inside comments/strings
+literate=*{:-}{{\textcolor{keywordblue}{:-}}}2
+%   {(}{{\textcolor{parenthyellow}{(}}}1
+%   {)}{{\textcolor{parenthyellow}{)}}}1
+{[}{{\textcolor{bracketpink}{[}}}1
+{]}{{\textcolor{bracketpink}{]}}}1
 }
 % PROLOG STYLING End
 
