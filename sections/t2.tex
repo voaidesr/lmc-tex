@@ -137,6 +137,8 @@ Formal
 
 \subsection{Algoritmul de construcție pentru FNC și FND de la un tabel}
 
+\label{alg1:fn}
+
 Există un algoritm mecanic prin care putem extrage FND și FNC pentru orice funcție booleană definită printr-un tabel de adevăr.
 
 Acest algoritm se bazează pe identificarea liniilor din tabel unde funcția se evaluează la $1$ (pentru extragerea FND) și la $0$ (pentru extragerea FNC).
@@ -156,9 +158,9 @@ Acest algoritm se bazează pe identificarea liniilor din tabel unde funcția se 
 
 \noindent \textcolor{violet}{\textbf{Exemplu:}} Fie $H : \{0, 1\}^3 \to \{0, 1\}$ descrisă prin tabelul:
 
-\vspace{0.5cm}
 
-\noindent
+
+
 \begin{minipage}[c]{0.35\textwidth}
 	\renewcommand{\arraystretch}{1.2}
 	\begin{tabular}{c|c|c|c}
@@ -196,6 +198,7 @@ Acest algoritm se bazează pe identificarea liniilor din tabel unde funcția se 
 \noindent $\psi = D_1 \land D_2 \land D_3$ în FNC a.î. $H = F_\psi$.
 
 \subsection{Algoritmul de aducere a unei formule la FND/FNC}
+\label{alg2:fn}
 
 Aducerea unei formule la Forma Normală Conjunctivă (FNC) sau Forma Normală Disjunctivă (FND) se poate realiza și prin transformări sintactice succesive, folosind echivalențe logice fundamentale, fără a fi necesară construirea întregului tabel de adevăr.
 
@@ -269,7 +272,7 @@ Operatorul \texttt{is}, utilizat astfel: \texttt{X is 2 + 3} sau \texttt{X is Y 
 
 Operatorul \texttt{=:=}, utilizat astfel: \texttt{10 =:= 5 + 5}, va evalua expresiile din ambele parti si doar verifica daca rezultatele sunt egale aritmetic. Acesta \textbf{nu unifica} variabile; ambele parti trebuie sa poata fi evaluate numeric in momentul apelului.
 
-Similar cu \texttt{=:=}, operatorii relationali (\texttt{<, >, >=, <=, =\textbackslash=}) realizeaza comparatii numerice dupa evaluarea ambelor parti si \textbf{nu realizeaza unificare}.
+Similar cu \texttt{=:=}, operatorii relationali (\texttt{<, >, >=, =<, =\textbackslash=}) realizeaza comparatii numerice dupa evaluarea ambelor parti si \textbf{nu realizeaza unificare}.
 
 Acesti operatori sunt utilizati pentru a restrange universul de solutii, dar nu pot fi folositi pentru a "atribui" valori variabilelor, cu exceptia lui \texttt{is}.
 
@@ -312,15 +315,15 @@ square(0, _).
 square(W, C) :- square(W, W, C).
 
 square(0, _, _).
-square(I, W, C) :- 
+square(I, W, C) :-
     I > 0,
     I1 is I - 1,
     square(I1, W, C),
     squareRow(W, C).
 
 squareRow(0, _) :- nl.
-squareRow(N, C) :- 
-    N > 0, 
+squareRow(N, C) :-
+    N > 0,
     N1 is N - 1,
     squareRow(N1, C),
     write(C).
@@ -450,7 +453,7 @@ Rulati si confirmati:
 
 \subsubsection*{Exercitiul 3}
 
-Definiti predicatul \texttt{intsum/3} care calculeaza suma tuturor numerelor intregi cuprinse intr-un interval [a, b] (primele doua argumente) si pune rezultatul in ultimul argument. 
+Definiti predicatul \texttt{intsum/3} care calculeaza suma tuturor numerelor intregi cuprinse intr-un interval [a, b] (primele doua argumente) si pune rezultatul in ultimul argument.
 
 Rulati si confirmati:
 
@@ -466,7 +469,7 @@ Rulati si confirmati:
 
 \subsubsection*{Exercitiul 4}
 
-Definiti predicatul \texttt{putere/3} care ridica numarul primit ca prim parametru la puterea data ca al doilea parametru si pune rezultatul in ultimul parametru. 
+Definiti predicatul \texttt{putere/3} care ridica numarul primit ca prim parametru la puterea data ca al doilea parametru si pune rezultatul in ultimul parametru.
 
 Rulati si confirmati:
 
