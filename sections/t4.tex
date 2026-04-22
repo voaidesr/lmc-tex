@@ -1,58 +1,267 @@
-\chapter{Sintaxa LP. Rezoluție și Prolog} 
+\chapter{Sintaxa LP. Rezoluție și Prolog}
 
-\section{Sintaxa LP} 
+\section{Sintaxa LP}
 
-Până acum am vorbit despre semantică, adică cum "dăm sens" formulelor, cum le evaluăm/interpretăm. Acum o să abordăm o 
-problemă similară, dar dintr-o totală altă perspectivă \textbf{sintaxa}. 
+Până acum am lucrat cu semantica: am evaluat formule, despre cum le dăm "înțeles" .
+Acum schimbăm perspectiva și ne uităm la latura \textit{sintactică}: nu ne mai interesează dacă o formulă este adevărată într-o evaluare, ci dacă poate fi
+\textit{demonstrată formal} din axiome și din anumite ipoteze. Practic, nu ne mai folosim de funcții de evaluare, ci de reguli.
 
-Sintaxa se preocupă exclusiv cu regulile formale prin care putem forma formule corecte. În această etapă, nu ne mai
-interesează deloc dacă o formulă este adevărată sau falsă. Ne interesează doar dacă este o formulă "corectă", dacă respectă "gramatica" limbajului nostru.
+În LP, lucrul acesta se face printr-un sistem deductiv de tip Hilbert. El are foarte puține reguli, dar este suficient de puternic încât să poată exprima
+toate demonstrațiile de care avem nevoie.
 
-\subsection{Sistemul de Deducție} 
+\subsection{Sistemul de deducție}
 
-În loc de tabele de adevăr, se folosesc tabele de adevăr de demonstrații, ci o schemă de axiome. 
+Sistemul Hilbert pentru LP este format dintr-o mulțime de scheme de axiome și o singură regulă de deducție. Axiomele reprezintă, practic, niște formule
+de bază, pe care nu trebuie să le demonstrăm. Regula de deducție este regula prin care demonstrăm noi formule, de la formule deja demonstrate.
 
 
-Fie \( \varphi, \psi, \chi \) formule. Atunci axiomele LP sunt:
- 
-\begin{description} 
+Fie \( \varphi, \psi, \chi \) formule. Axiomele lui LP sunt:
 
-  \item[A1)] \( \varphi \to (\psi \to \varphi) \) (dacă ceva este demonstrat, rămâne demonstrat la adăugarea oricărei ipoteze) 
-  \item[A2)] \( (\varphi \rightarrow (\psi \rightarrow \chi)) \rightarrow ((\varphi \rightarrow \psi) \rightarrow (\varphi \rightarrow \chi)) \) (distributivitatea implicației) 
-  \item[A3)] \( (\neg \psi \to \neg \varphi) \to (\varphi \to \psi) \) 
-  
+\begin{description}
+	\item[(A1)] \( \varphi \to (\psi \to \varphi) \)
+	\item[(A2)] \( (\varphi \to (\psi \to \chi)) \to ((\varphi \to \psi) \to (\varphi \to \chi)) \)
+	\item[(A3)] \( (\neg \psi \to \neg \varphi) \to (\varphi \to \psi) \)
 \end{description}
 
-De la aceste axiome, care sunt formulele "corecte" de bază, avem nevoie și de un mod de a deduce/construi noi formule "corecte". Acesta 
-este reprezentat de \textit{Modus Ponens} (prescurtat MP). 
-
-Adică, pentru \( \varphi, \psi \) formule, din \( \varphi \) și \( \varphi \to \psi \) se inferă \( \psi \). (Intuitiv, din faptul că \( \varphi \)) corect, dacă
-\( \varphi \to \psi \) este corect, atunci și \( \psi \) este corect.
-
-Altfel scris: 
-
+Regula de deducție este \textit{Modus Ponens}:
 \[
-  \frac{\varphi, \; \varphi \to \psi}{\psi}
-\] 
+	\frac{\varphi, \; \varphi \to \psi}{\psi}
+\]
 
-\subsection{\( \Gamma \)-teoreme} 
+Adică, dacă am demonstrat deja \( \varphi \) și am demonstrat și implicația \( \varphi \to \psi \), atunci avem voie să inferăm \( \psi \). (Adică îl considerăm
+pe \( \psi \)) demonstrat.
+Aceasta este singura regulă de deducție a sistemului.
 
-În LP doar câteva formule pot fi deduse prin MP de la axiome. Uneori de dorim, însă, să construim formule de la alte formule pe care le
-presupunem noi a fi "corecte". Acest lucru se poate face cu ajutorul \( \Gamma- \)teoremelor. 
+\subsection{\( \Gamma \)-teoreme}
+
+De obicei nu vrem să demonstrăm formule doar din axiome, ci și pornind de la anumite ipoteze suplimentare. Acesta este rolul mulțimii \( \Gamma \):
+ea conține formulele pe care avem voie să le folosim ca puncte de plecare în demonstrație.
 
 \begin{definition}
-  Fie \( \Gamma \) o mulțime de formule de formule. \( \Gamma \)-teoremele sunt formulele din LP definite astfel:
+	Fie \( \Gamma \) o mulțime de formule. \( \Gamma \)-teoremele sunt formulele definite astfel:
 
-  \begin{description} 
+	\begin{description}
+		\item[(T0)] Orice axiomă este \( \Gamma \)-teoremă.
+		\item[(T1)] Orice formulă din \( \Gamma \) este \( \Gamma \)-teoremă.
+		\item[(T2)] Dacă \( \varphi \) și \( \varphi \to \psi \) sunt \( \Gamma \)-teoreme, atunci și \( \psi \) este \( \Gamma \)-teoremă.
+		\item[(T3)] Numai formulele obținute prin aplicări finite ale regulilor (T0), (T1), (T2) sunt \( \Gamma \)-teoreme.
+	\end{description}
 
-    \item[(T0)] Orice axiomă este \( \Gamma \)-teoremă
-    \item[(T1)] Orice \( \varphi \in \Gamma \) este \( \Gamma \)-teoremă
-    \item[(T2)] Dacă \( \varphi \) și \( \varphi \to \psi \) sunt \( \Gamma \)-teoreme, atunci și \( \psi \) este \( \Gamma \)-teoremă
-    \item[(T3)] Numai formulele obținute aplicând T0, T1 și T2 sunt \( \Gamma \)-teoreme
-
-    
-  \end{description}
+	Dacă \( \varphi \) este \( \Gamma \)-teoremă, spunem și că \( \varphi \) este \textbf{dedusă} din ipotezele \( \Gamma \).
 \end{definition}
-  
 
+\subsubsection*{Notații}
 
+Vom folosi notațiile standard:
+\[
+	\begin{aligned}
+		Thm(\Gamma)           & := \text{mulțimea tuturor \( \Gamma \)-teoremelor},                            \\
+		\Gamma \vdash \varphi & :\Leftrightarrow \varphi \in Thm(\Gamma),                                      \\
+		\Gamma \vdash \Delta  & :\Leftrightarrow \Gamma \vdash \delta \text{ pentru orice } \delta \in \Delta, \\
+		Thm                   & := Thm(\emptyset),                                                             \\
+		\vdash \varphi        & :\Leftrightarrow \emptyset \vdash \varphi.
+	\end{aligned}
+\]
+
+\begin{definition}
+	O formulă \( \varphi \) se numește \textbf{teoremă a lui LP} dacă \( \vdash \varphi \).
+\end{definition}
+
+\begin{note}[Inducție după \( \Gamma \)-teoreme]
+	Definiția inductivă a lui \( Thm(\Gamma) \) ne dă și o metodă standard de demonstrație.
+
+	\begin{enumerate}
+		\item Dacă vrem să arătăm că orice \( \Gamma \)-teoremă are o proprietate \( P \), este suficient să verificăm axiomele, formulele din \( \Gamma \) și închiderea lui \( P \) la Modus Ponens.
+		      (adică, orice formulă rezultată din MP) resprectă și ea proprietatea \( P \).
+		\item Dacă vrem să arătăm că \( Thm(\Gamma) \subseteq \Sigma \), este suficient să verificăm că toate axiomele sunt în \( \Sigma \), toate formulele din \( \Gamma \) sunt în \( \Sigma \), iar \( \Sigma \) este închisă la Modus Ponens.
+	\end{enumerate}
+
+	Aceasta este exact analogia inducției pe care am folosit-o și la formule.
+\end{note}
+
+\begin{prop}
+	Fie \( \Gamma, \Delta \) mulțimi de formule. Atunci:
+	\begin{enumerate}
+		\item dacă \( \Gamma \subseteq \Delta \), atunci \( Thm(\Gamma) \subseteq Thm(\Delta) \);
+		\item \( Thm \subseteq Thm(\Gamma) \);
+		\item dacă \( \Gamma \vdash \Delta \), atunci \( Thm(\Delta) \subseteq Thm(\Gamma) \);
+		\item \( Thm(Thm(\Gamma)) = Thm(\Gamma) \).
+	\end{enumerate}
+\end{prop}
+
+\vspace{0.5cm}
+
+Punctul (i) spune că mai multe ipoteze nu pot strica o demonstrație: dacă puteai demonstra ceva din \( \Gamma \), poți demonstra și dintr-o mulțime mai mare.
+Punctul (ii) spune că orice teoremă rămâne demonstrabilă și atunci când adăugăm ipoteze. Punctele (iii) și (iv) formalizează ideea că o mulțime de formule poate
+fi înlocuită cu toate consecințele ei deductive fără să schimbăm ce mai poate fi demonstrat din ea.
+
+\subsection{\( \Gamma \)-demonstrații}
+
+Până acum am definit ce înseamnă să fie o formulă demonstrabilă din \( \Gamma \), dar nu am spus încă explicit cum arată o demonstrație concretă.
+Pentru asta introducem noțiunea de secvență de formule.
+
+\begin{definition}
+	O \( \Gamma \)-demonstrație este o secvență de formule
+	\[
+		\theta_1, \theta_2, \dots, \theta_n
+	\]
+	astfel încât pentru orice \( i \in \{1, \dots, n\} \), una dintre următoarele condiții este satisfăcută:
+	\begin{enumerate}
+		\item \( \theta_i \) este axiomă;
+		\item \( \theta_i \in \Gamma \);
+		\item există \( j, k < i \) astfel încât \( \theta_k = \theta_j \to \theta_i \).
+	\end{enumerate}
+\end{definition}
+
+Pe scurt, o demonstrație este o secvență de formule pe care \textbf{le demonstrăm}. Condițiile 1 și 2 sunte clare, acestea ilustrând că într-o demonstrație
+putem scrie formule care sunt \( \Gamma \)-teoreme conform definiției. Mai complicată este condiția 3, care afirmă că o formulă este demonstrată
+a fi \( \Gamma \)-teoremă dacă există două formule care apar precedent în teoremă (\( \theta_j \) și \( \theta_j \to \theta_i \)). Acest lucru reprezintă aplicarea
+Modus Ponens.
+
+\begin{lemma}
+	Dacă \( \theta_1, \dots, \theta_n \) este o \( \Gamma \)-demonstrație, atunci \( \Gamma \vdash \theta_i \) pentru orice \( i \in \{1, \dots, n\} \).
+\end{lemma}
+
+\begin{proof}
+	Demonstrăm prin inducție după \( i \).
+
+	Pentru un \( i \) fix, dacă \( \theta_i \) este axiomă, rezultă \( \Gamma \vdash \theta_i \) din punctul (i) al propoziției anterioare.
+	Dacă \( \theta_i \in \Gamma \), rezultă \( \Gamma \vdash \theta_i \) din punctul (ii).
+	Dacă există \( j, k < i \) cu \( \theta_k = \theta_j \to \theta_i \), atunci prin ipoteza de inducție avem
+	\( \Gamma \vdash \theta_j \) și \( \Gamma \vdash \theta_j \to \theta_i \), deci din punctul (iii) obținem \( \Gamma \vdash \theta_i \).
+\end{proof}
+
+\begin{definition}
+	Fie \( \varphi \) o formulă. O demonstrație din \( \Gamma \) a lui \( \varphi \) este o secvență ca mai sus
+	a cărei ultimă formulă este \( \varphi \).
+
+	Numărul \( n \) se numește \textbf{lungimea} demonstrației.
+\end{definition}
+
+\begin{prop}
+	Pentru orice mulțime de formule \( \Gamma \) și orice formulă \( \varphi \), avem
+	\[
+		\Gamma \vdash \varphi \quad \text{ddacă} \quad \text{există o \( \Gamma \)-demonstrație a lui } \varphi.
+	\]
+\end{prop}
+
+Practic, dacă o formulă este o\( \Gamma \)-teoremă înseamnă că există și o \( \Gamma \)-demonstrație pentru aceasta.
+
+\begin{ex}
+	Fie \( \Gamma = \{\varphi, \varphi \to \psi\} \). Să se construiască o \( \Gamma \)-demonstrație a lui \( \psi \).
+\end{ex}
+
+\begin{solutie}
+	Luăm secvența:
+	\[
+		\theta_1 = \varphi, \qquad \theta_2 = \varphi \to \psi, \qquad \theta_3 = \psi.
+	\]
+
+	Primele două formule sunt în \( \Gamma \), deci sunt permise prin regula (T1). Ultima formulă se obține din primele două prin Modus Ponens.
+	Prin urmare, \( \theta_1, \theta_2, \theta_3 \) este o \( \Gamma \)-demonstrație a lui \( \psi \), deci \( \Gamma \vdash \psi \).
+\end{solutie}
+
+\subsection{Proprietăți sintactice}
+
+\begin{prop}
+	Pentru orice formulă \( \varphi \), avem
+	\[
+		\vdash \varphi \to \varphi.
+	\]
+\end{prop}
+
+\begin{proof}
+	Demonstrația standard în sistem Hilbert are cinci pași:
+
+	\[
+		\begin{aligned}
+			(1)\quad & \vdash (\varphi \to ((\varphi \to \varphi) \to \varphi))                                               \\
+			         & \qquad \to ((\varphi \to (\varphi \to \varphi)) \to (\varphi \to \varphi)) &  & \text{A2}              \\
+			(2)\quad & \vdash \varphi \to ((\varphi \to \varphi) \to \varphi)                     &  & \text{A1}              \\
+			(3)\quad & \vdash (\varphi \to (\varphi \to \varphi)) \to (\varphi \to \varphi)       &  & \text{MP din (1), (2)} \\
+			(4)\quad & \vdash \varphi \to (\varphi \to \varphi)                                   &  & \text{A1}              \\
+			(5)\quad & \vdash \varphi \to \varphi                                                 &  & \text{MP din (3), (4)}
+		\end{aligned}
+	\]
+
+	Acesta este primul exemplu important de formulă care nu este axiomă, dar poate fi demonstrată din axiome prin aplicări succesive ale lui MP.
+\end{proof}
+
+\begin{theorem}[Teorema deducției]
+	\label{th:deductie}
+	Fie \( \Gamma \) o mulțime de formule și fie \( \varphi, \psi \) formule. Atunci
+	\[
+		\Gamma \cup \{\varphi\} \vdash \psi \quad \text{ddacă} \quad \Gamma \vdash \varphi \to \psi.
+	\]
+\end{theorem}
+
+Teorema deducției este unul dintre cele mai utile instrumente sintactice. Ea spune că, dacă putem demonstra \( \psi \) folosind în plus ipoteza \( \varphi \),
+atunci putem „muta” acea ipoteză în stânga unei implicații și obținem o demonstrație pentru \( \varphi \to \psi \) fără să mai presupunem \( \varphi \).
+
+\subsubsection*{Consecințe utile}
+
+\begin{prop}
+	Pentru orice formule \( \varphi, \psi, \chi \), avem
+	\[
+		\vdash (\varphi \to \psi) \to ((\psi \to \chi) \to (\varphi \to \chi)).
+	\]
+\end{prop}
+
+\begin{prop}
+	Pentru orice mulțime de formule \( \Gamma \) și orice formule \( \varphi, \psi, \chi \), dacă
+	\[
+		\Gamma \vdash \varphi \to \psi \qquad \text{și} \qquad \Gamma \vdash \psi \to \chi,
+	\]
+	atunci
+	\[
+		\Gamma \vdash \varphi \to \chi.
+	\]
+\end{prop}
+
+\begin{proof}
+	Știm din propoziția anterioară că
+	\[
+		\vdash (\varphi \to \psi) \to ((\psi \to \chi) \to (\varphi \to \chi)).
+	\]
+	Prin faptul că orice teoremă este și \( \Gamma \)-teoremă, avem
+	\[
+		\Gamma \vdash (\varphi \to \psi) \to ((\psi \to \chi) \to (\varphi \to \chi)).
+	\]
+	Aplicând MP cu cele două ipoteze din enunț, obținem succesiv
+	\[
+		\Gamma \vdash (\psi \to \chi) \to (\varphi \to \chi)
+	\]
+	și apoi
+	\[
+		\Gamma \vdash \varphi \to \chi.
+	\]
+\end{proof}
+
+\begin{note}[Formule derivate utile]
+	În practică, după primele demonstrații nu mai reluăm de fiecare dată derivările de bază. Câteva rezultate utile, pe care merită să le rețineți, sunt:
+
+	\begin{enumerate}
+		\item \( \vdash (\varphi \to (\psi \to \chi)) \to (\psi \to (\varphi \to \chi)) \), adică putem permuta antecedentele.
+		\item \( \{\psi, \neg \psi\} \vdash \varphi \), adică din contradicție putem demonstra orice.
+		\item \( \vdash \neg\neg \varphi \to \varphi \) și \( \vdash \varphi \to \neg\neg \varphi \), adică dubla negație funcționează în ambele sensuri.
+		\item \( \vdash (\varphi \to \psi) \to (\neg \psi \to \neg \varphi) \), adică avem contrapozitia.
+		\item Dacă \( \Gamma \cup \{\psi\} \vdash \varphi \) și \( \Gamma \cup \{\neg \psi\} \vdash \varphi \), atunci \( \Gamma \vdash \varphi \). Aceasta este forma sintactică a unei demonstrații prin cazuri.
+	\end{enumerate}
+
+	Toate aceste formule se demonstrează în același stil: plecăm de la axiome, aplicăm MP și folosim frecvent Teorema deducției pentru a comprima demonstrațiile.
+\end{note}
+
+\begin{prop}
+	Pentru orice formule \( \varphi, \psi, \chi \), avem:
+	\begin{enumerate}
+		\item \( \{\varphi \land \psi\} \vdash \varphi \);
+		\item \( \{\varphi \land \psi\} \vdash \psi \);
+		\item \( \{\varphi, \psi\} \vdash \varphi \land \psi \);
+		\item \( \{\varphi, \psi\} \vdash \chi \) ddacă \( \{\varphi \land \psi\} \vdash \chi \);
+		\item \( \vdash \varphi \land \psi \leftrightarrow \psi \land \varphi \).
+	\end{enumerate}
+\end{prop}
+
+Primele două puncte spun că dintr-o conjuncție putem extrage fiecare element al ei. Punctul (iv)
+spune că a lucra cu două ipoteze separate sau cu conjuncția lor este, deductiv, același lucru. Ultimul punct formalizează faptul că ordinea conjunctelor
+nu contează.
