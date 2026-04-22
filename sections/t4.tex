@@ -1,1 +1,164 @@
 \chapter{Rezoluție și Prolog}
+
+\section{Termeni compusi in Prolog}
+
+Pana acum in prolog, am lucrat doar cu termeni simpli (variabile, constante, atomi), dar in prolog mai
+exista si conceptul de \textbf{termeni compusi}.
+
+De exemplu putem codifica formula logica $\varphi = (v_0 \lor v_1) \rightarrow v_2$ astfel:
+
+\texttt{implica(sau(v0, v1), v2)}
+
+In acest exemplu, \texttt{implica} \textbf{nu este un fapt} (nu avem punct la final) ci un termen compus.
+
+\vspace{\baselineskip}
+
+Ca sa intelegem cum se lucreaza cu ele, putem lua urmatorul exemplu unde vrem sa aflam
+toate variabilele unei expresii logice (pentru $\varphi$ definit anterior variabilele ar fi \texttt{[v0, v1, v2]}).
+Pentru simplitate vom afisa si duplicate.
+
+\begin{lstlisting}
+vars(A, [A]) :- atom(A).
+
+vars(not(A), R) :- vars(A, R).
+
+vars(si(A, B), R) :- 
+    vars(A, R1),
+    vars(B, R2),
+    append(R1, R2, R).
+
+vars(sau(A, B), R) :- 
+    vars(A, R1),
+    vars(B, R2),
+    append(R1, R2, R).
+
+vars(implica(A, B), R) :- 
+    vars(A, R1),
+    vars(B, R2),
+    append(R1, R2, R).
+\end{lstlisting}
+
+\texttt{?- vars(implica(sau(v0, v1), v2), R).}
+
+\texttt{R = [v0, v1, v2].}
+
+\texttt{?- vars(sau(si(v1, v2), si(v2, v4)), R).}
+
+\texttt{R = [v1, v2, v2, v4].}
+
+\newpage
+
+\subsection*{Predicate utile}
+
+\textbf{Predicatul \texttt{functor(termen compus, functor, aritate)}} extrage functorul si aritatea
+termenului compus:
+
+\texttt{?- functor(data(22, aprilie, 2026), F, A).}
+
+\texttt{F = data,}
+
+\texttt{A = 3.}
+
+\vspace{\baselineskip}
+
+\textbf{Predicatul \texttt{arg(i, termen compus, rez)}} extrage termenul de la pozitia i din termenul 
+compus (atentie, este indexat de la 1):
+
+\texttt{?- arg(2, data(22, aprilie, 2026), Luna).}
+
+\texttt{Luna = aprilie.}
+
+\vspace{\baselineskip}
+
+\textbf{Operatorul \texttt{=..}} transforma un termen compus intr-o lista si invers:
+
+\texttt{?- data(22, aprilie, 2026) =.. Lista.}
+
+\texttt{Lista = [data, 22, aprilie, 2026].}
+
+\texttt{?- Data =.. [data, 22, aprilie, 2026].}
+
+\texttt{Data = data(22, aprilie, 2026).}
+
+
+\subsection*{Exercitii propuse:}
+
+\subsubsection*{Exercitiul 1}
+Definiti predicatul \texttt{suma\_noduri(Arbore, Suma)} care calculeaza suma nodurilor
+unui arbore binar. Folositi termenul compus \texttt{nod(Valoare, ArbStang, ArbDrept)}.
+
+\texttt{?- suma\_noduri(nod(5, nod(3, nod(1, nil, nil), nod(4, nil, nil)), nod(8, nil, nil)), R).}
+
+\texttt{R = 21.}
+
+\subsubsection*{Exercitiul 2}
+Definiti predicatul \texttt{substituie(ExpresieInitiala, CeInlocuiesc, CuCeInlocuiesc, ExpresieFinala)} care
+sparge recursiv o structura si inlocuieste aparitiile unui subtermen specific cu altul.
+
+\texttt{?- substituie(implica(v1, si(v1, v3)), v1, not(v2), R).}
+
+\texttt{R = implica(not(v2), si(not(v2), v3)).}
+
+\subsubsection*{Exercitiul 3}
+Definiti predicatul \texttt{evaluare(Expresie, ListaAdevar, Rezultat)} care primeste
+o expresie logica si o lista de variabile care sunt considerate adevarate.
+
+Rulati si confirmati:
+
+\texttt{?- evaluare(si(v1, sau(v2, v3)), [v1, v3], R).}
+
+\texttt{R = true.}
+
+\texttt{?- evaluare(imp(v3, si(v1, sau(v2, v3))), [v1], R).}
+
+\texttt{R = false.}
+
+
+
+
+\newpage
+\begin{ex}
+Să se demonstreze următoarele teoreme prin metoda deducției naturale:
+\begin{enumerate}
+    \item[(i)] $(\varphi \rightarrow (\psi \rightarrow \chi)) \rightarrow (\psi \rightarrow (\varphi \rightarrow \chi))$;
+    \item[(ii)] $(\varphi \rightarrow \psi) \rightarrow (\varphi \rightarrow (\chi \rightarrow \psi))$.
+\end{enumerate}
+\end{ex}
+
+\begin{solutie}
+\vspace{0.3cm}
+\noindent \textbf{Pentru formula (i):} $\vdash (\varphi \rightarrow (\psi \rightarrow \chi)) \rightarrow (\psi \rightarrow (\varphi \rightarrow \chi))$
+
+Pentru a urmări demonstrația clar, prima coloană va reprezenta starea curentă (secvența deductivă), iar a doua coloană va indica justificarea (regula aplicată).
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3} % Spațiere puțin mai mare între rânduri pentru lizibilitate
+\begin{tabular}{r l l}
+1) & $\{\varphi \rightarrow (\psi \rightarrow \chi), \psi, \varphi\} \vdash \varphi \rightarrow (\psi \rightarrow \chi)$ & P1.53(ii) \\
+2) & $\{\varphi \rightarrow (\psi \rightarrow \chi), \psi, \varphi\} \vdash \varphi$ & P1.53(ii) \\
+3) & $\{\varphi \rightarrow (\psi \rightarrow \chi), \psi, \varphi\} \vdash \psi \rightarrow \chi$ & MP: 1), 2) \\
+4) & $\{\varphi \rightarrow (\psi \rightarrow \chi), \psi, \varphi\} \vdash \psi$ & P1.53(ii) \\
+5) & $\{\varphi \rightarrow (\psi \rightarrow \chi), \psi, \varphi\} \vdash \chi$ & MP: 3), 4) \\
+6) & $\{\varphi \rightarrow (\psi \rightarrow \chi), \psi\} \vdash \varphi \rightarrow \chi$ & Th. Ded. din 5) \\
+7) & $\{\varphi \rightarrow (\psi \rightarrow \chi)\} \vdash \psi \rightarrow (\varphi \rightarrow \chi)$ & Th. Ded. din 6) \\
+8) & $\vdash (\varphi \rightarrow (\psi \rightarrow \chi)) \rightarrow (\psi \rightarrow (\varphi \rightarrow \chi))$ & Th. Ded. din 7) \\
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+\noindent \textbf{Pentru formula (ii):} $\vdash (\varphi \rightarrow \psi) \rightarrow (\varphi \rightarrow (\chi \rightarrow \psi))$
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{r l l}
+1) & $\{\varphi \rightarrow \psi, \varphi\} \vdash \varphi \rightarrow \psi$ & P1.53(ii) \\
+2) & $\{\varphi \rightarrow \psi, \varphi\} \vdash \varphi$ & P1.53(ii) \\
+3) & $\{\varphi \rightarrow \psi, \varphi\} \vdash \psi$ & MP: 1), 2) \\
+4) & $\{\varphi \rightarrow \psi, \varphi\} \vdash \psi \rightarrow (\chi \rightarrow \psi)$ & A1 \\
+5) & $\{\varphi \rightarrow \psi, \varphi\} \vdash \chi \rightarrow \psi$ & MP: 3), 4) \\
+6) & $\{\varphi \rightarrow \psi\} \vdash \varphi \rightarrow (\chi \rightarrow \psi)$ & Th. Ded. din 5) \\
+7) & $\vdash (\varphi \rightarrow \psi) \rightarrow (\varphi \rightarrow (\chi \rightarrow \psi))$ & Th. Ded. din 6) \\
+\end{tabular}
+\end{center}
+
+\end{solutie}
