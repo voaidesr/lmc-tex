@@ -1,1 +1,58 @@
-\chapter{Rezoluție și Prolog}
+\chapter{Sintaxa LP. Rezoluție și Prolog} 
+
+\section{Sintaxa LP} 
+
+Până acum am vorbit despre semantică, adică cum "dăm sens" formulelor, cum le evaluăm/interpretăm. Acum o să abordăm o 
+problemă similară, dar dintr-o totală altă perspectivă \textbf{sintaxa}. 
+
+Sintaxa se preocupă exclusiv cu regulile formale prin care putem forma formule corecte. În această etapă, nu ne mai
+interesează deloc dacă o formulă este adevărată sau falsă. Ne interesează doar dacă este o formulă "corectă", dacă respectă "gramatica" limbajului nostru.
+
+\subsection{Sistemul de Deducție} 
+
+În loc de tabele de adevăr, se folosesc tabele de adevăr de demonstrații, ci o schemă de axiome. 
+
+
+Fie \( \varphi, \psi, \chi \) formule. Atunci axiomele LP sunt:
+ 
+\begin{description} 
+
+  \item[A1)] \( \varphi \to (\psi \to \varphi) \) (dacă ceva este demonstrat, rămâne demonstrat la adăugarea oricărei ipoteze) 
+  \item[A2)] \( (\varphi \rightarrow (\psi \rightarrow \chi)) \rightarrow ((\varphi \rightarrow \psi) \rightarrow (\varphi \rightarrow \chi)) \) (distributivitatea implicației) 
+  \item[A3)] \( (\neg \psi \to \neg \varphi) \to (\varphi \to \psi) \) 
+  
+\end{description}
+
+De la aceste axiome, care sunt formulele "corecte" de bază, avem nevoie și de un mod de a deduce/construi noi formule "corecte". Acesta 
+este reprezentat de \textit{Modus Ponens} (prescurtat MP). 
+
+Adică, pentru \( \varphi, \psi \) formule, din \( \varphi \) și \( \varphi \to \psi \) se inferă \( \psi \). (Intuitiv, din faptul că \( \varphi \)) corect, dacă
+\( \varphi \to \psi \) este corect, atunci și \( \psi \) este corect.
+
+Altfel scris: 
+
+\[
+  \frac{\varphi, \; \varphi \to \psi}{\psi}
+\] 
+
+\subsection{\( \Gamma \)-teoreme} 
+
+În LP doar câteva formule pot fi deduse prin MP de la axiome. Uneori de dorim, însă, să construim formule de la alte formule pe care le
+presupunem noi a fi "corecte". Acest lucru se poate face cu ajutorul \( \Gamma- \)teoremelor. 
+
+\begin{definition}
+  Fie \( \Gamma \) o mulțime de formule de formule. \( \Gamma \)-teoremele sunt formulele din LP definite astfel:
+
+  \begin{description} 
+
+    \item[(T0)] Orice axiomă este \( \Gamma \)-teoremă
+    \item[(T1)] Orice \( \varphi \in \Gamma \) este \( \Gamma \)-teoremă
+    \item[(T2)] Dacă \( \varphi \) și \( \varphi \to \psi \) sunt \( \Gamma \)-teoreme, atunci și \( \psi \) este \( \Gamma \)-teoremă
+    \item[(T3)] Numai formulele obținute aplicând T0, T1 și T2 sunt \( \Gamma \)-teoreme
+
+    
+  \end{description}
+\end{definition}
+  
+
+
