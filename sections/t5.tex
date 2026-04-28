@@ -1,1 +1,220 @@
 \chapter{Sintaxa LP. Introducere in Logica de Ordinul I}
+
+Noi pana acum am avut doua ramuri complet separate in logica propozitionala: \textbf{sintaxa} si \textbf{semantica}.
+In acest tutoriat vom discuta despre cum cele doua sunt legate una de alta si cum putem 'transpune' din semantica in sintaxa si invers.
+
+\subsection{Corectitudine}
+
+\begin{theorem}[Teorema de corectitudine]
+    Orice teoremă este tautologie:
+    \[
+        \vdash \varphi \Rightarrow \models \varphi
+    \]
+    pentru orice \( \varphi \in Form \).
+\end{theorem}
+
+\begin{proof}
+    Fie
+    \[
+        \Sigma := \text{mulțimea tuturor tautologiilor lui } LP.
+    \]
+
+    Trebuie să demonstrăm că \( Thm \subseteq \Sigma \). O facem prin inducție după teoreme.
+    \begin{itemize}
+        \item Axiomele sunt în \( \Sigma \) (se poate demonstra simplu prin metodele discutate pana acum, fie cu tabel fie prin demonstratie mai riguroasa)
+        \item Demonstrăm acum că \( \Sigma \) este închisă la modus ponens.
+        
+              Presupunem că \( \varphi, \varphi \to \psi \in \Sigma \), adică, \( \models \varphi \) și \( \models \varphi \to \psi \), deci \break
+              \( \models \varphi \land (\varphi \to \psi) \). Aplicăm modus ponens (in forma de la semantica: \break \( \varphi \land (\varphi \to \psi) \models \psi \)) pentru a obține că \( \models \psi \), adică, \( \psi \in \Sigma \).
+    \end{itemize}
+\end{proof}
+
+Pentru urmatoarele notiuni vom defini conceptul urmator:
+
+
+\[
+    v^e = \begin{cases} 
+        v & \text{dacă } e(v) = 1 \\ 
+        \neg v & \text{dacă } e(v) = 0. 
+    \end{cases}
+\]
+
+In mod intuitiv, teoremele din sintaxa sunt adevarate, si noi vrem sa ajungem sa
+demonstram ca si tautologiile sunt teoreme.
+
+Vom extinde conceptul si la multimi, astfel pentru orice mulțime \break \( W = \{v_1, \dots, v_k\} \) de variabile, notăm
+\[
+    W^e = \{v^e \mid v \in W\} = \{v_1^e, v_2^e, \dots, v_k^e\}.
+\]
+
+
+\begin{prop}
+    Fie $e : V \to \{0, 1\}$ o evaluare. Pentru orice formulă $\varphi$,
+    \begin{enumerate}
+        \item[(i)] Dacă $e^+(\varphi) = 1$, atunci $Var(\varphi)^e \vdash \varphi$.
+        \item[(ii)] Dacă $e^+(\varphi) = 0$, atunci $Var(\varphi)^e \vdash \neg\varphi$.
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Demonstrăm prin inducție structurală asupra complexității formulei $\varphi$.
+
+    \textbf{Cazul de bază:} $\varphi = v$, unde $v$ este o variabilă propozițională. \\
+    În acest caz, $Var(\varphi)^e = \{v^e\}$ și evaluarea este directă: $e^+(v) = e(v)$.
+    \begin{itemize}
+        \item Dacă $e(v) = 1$, atunci conform definiției $v^e = v$. Evident, din ipoteza $\{v\}$ putem deduce $v$, deci $\{v^e\} \vdash v$.
+        \item Dacă $e(v) = 0$, atunci conform definiției $v^e = \neg v$. Similar, din ipoteza $\{\neg v\}$ putem deduce $\neg v$, deci $\{v^e\} \vdash \neg v$.
+    \end{itemize}
+
+    \vspace{0.3cm}
+    \textbf{Pasul inductiv:} Presupunem proprietatea adevărată pentru formulele mai simple $\psi$ și $\chi$. Avem două cazuri pentru structura lui $\varphi$:
+
+    \textbf{Cazul 1:} $\varphi = \neg\psi$. \\
+    Observăm că variabilele rămân aceleași: $Var(\varphi) = Var(\psi)$, ceea ce implică $Var(\varphi)^e = Var(\psi)^e$.
+    \begin{itemize}
+        \item \textit{Dacă $e^+(\varphi) = 1$:} Aceasta înseamnă că $e^+(\psi) = 0$. Conform ipotezei de inducție pentru $\psi$, avem $Var(\psi)^e \vdash \neg\psi$. Deoarece mulțimile de variabile evaluate coincid, obținem $Var(\varphi)^e \vdash \neg\psi$, adică exact $Var(\varphi)^e \vdash \varphi$.
+        
+        \item \textit{Dacă $e^+(\varphi) = 0$:} Aceasta înseamnă că $e^+(\psi) = 1$. Conform ipotezei de inducție, obținem $Var(\psi)^e \vdash \psi$, echivalent cu $Var(\varphi)^e \vdash \psi$. Deoarece știm că $\vdash \psi \to \neg\neg\psi$ (teoremă demonstrată in curs), putem aplica Modus Ponens (MP) pentru a deduce $Var(\varphi)^e \vdash \neg\neg\psi$, adică $Var(\varphi)^e \vdash \neg\varphi$.
+    \end{itemize}
+
+    \vspace{0.3cm}
+    Pentru \textbf{Cazul 2:} $\varphi = \psi \to \chi$ se procedeaza analog, se bazeaza pe reuniunea dintre $Var(\varphi) = Var(\psi) \cup Var(\chi)$ si se aplica niste teoreme de gamma demonstratii.
+\end{proof}
+
+
+\newpage
+
+
+\begin{theorem}[Teorema de completitudine]
+    Pentru orice formulă $\varphi$,
+    \[
+        \vdash \varphi \quad \text{ddacă} \quad \models \varphi.
+    \]
+\end{theorem}
+
+\begin{proof}
+    \textbf{Implicația „$\Rightarrow$”:} Se aplică Teorema de corectitudine.
+
+    \vspace{0.3cm}
+    \textbf{Implicația „$\Leftarrow$”:} Fie $\varphi$ o tautologie și $Var(\varphi) = \{x_1, \dots, x_n\}$. Demonstrăm prin inducție după $k$ următoarea proprietate:
+    \begin{equation*}
+        (*) \quad \text{pentru orice } k \le n, \text{ pentru orice } e : V \to \{0, 1\}, \quad \{x_1^e, \dots, x_{n-k}^e\} \vdash \varphi.
+    \end{equation*}
+
+    Observăm că pentru $k = n$, proprietatea $(*)$ devine $\emptyset \vdash \varphi$, adică exact $\vdash \varphi$.
+	In mod practic, "eliminam" cate o variabila daca realizam ca nu ne strica faptul ca formula este o tautologie.
+
+    \vspace{0.3cm}
+    \textbf{Cazul de bază $k = 0$:} Fie $e : V \to \{0, 1\}$ o evaluare oarecare. Deoarece $\varphi$ este tautologie, avem $e^+(\varphi) = 1$. 
+    Aplicând propoziția anterioara, obținem direct că
+    \[
+        Var(\varphi)^e = \{x_1^e, \dots, x_n^e\} \vdash \varphi.
+    \]
+
+    \vspace{0.3cm}
+    \textbf{Pasul inductiv $k \Rightarrow k + 1$:} Presupunem că $(*)$ este adevărată pentru $k$ și fie $e : V \to \{0, 1\}$ o evaluare curentă. Trebuie să arătăm că $\{x_1^e, \dots, x_{n-k-1}^e\} \vdash \varphi$.
+
+    Considerăm o nouă evaluare $e' := e_{x_{n-k} \mapsto \neg e(x_{n-k})}$. Așadar, $e'$ coincide cu $e$ pe toate variabilele cu excepția lui $x_{n-k}$:
+    \[
+        e'(v) = e(v) \text{ pentru orice } v \ne x_{n-k}
+    \]
+    și
+    \[
+        e'(x_{n-k}) = \begin{cases} 
+            0 & \text{dacă } e(x_{n-k}) = 1 \\ 
+            1 & \text{dacă } e(x_{n-k}) = 0. 
+        \end{cases}
+    \]
+
+    Rezultă că evaluările variabilelor propoziționale (literalele) se comportă astfel: $x_i^{e'} = x_i^e$ pentru orice $i \in \{1, \dots, n-k-1\}$ și
+    \[
+        x_{n-k}^{e'} = \begin{cases} 
+            \neg x_{n-k} & \text{dacă } x_{n-k}^e = x_{n-k} \\ 
+            x_{n-k} & \text{dacă } x_{n-k}^e = \neg x_{n-k}. 
+        \end{cases}
+    \]
+
+    Din ipoteza de inducție $(*)$ aplicată atât pentru evaluarea $e$ cât și pentru $e'$ (putem face asta pentru ca o tautologie este adevarata indiferent de evaluarea pe care o luam), obținem cele două deducții posibile pentru starea variabilei $x_{n-k}$:
+    \begin{align*}
+        \{x_1^e, \dots, x_{n-k-1}^e, x_{n-k}\} &\vdash \varphi \\
+        \{x_1^e, \dots, x_{n-k-1}^e, \neg x_{n-k}\} &\vdash \varphi
+    \end{align*}
+
+    Observam ca putem deduce $\varphi$ si cu $x_{n-k}$ dar si cu $\neg x_{n-k}$ deci putem concluziona ca este irelevanta si o putem elimina (Prop. 1.67):
+    \[
+        \{x_1^e, \dots, x_{n-k-1}^e\} \vdash \varphi.
+    \]
+    Aceasta finalizează pasul inductiv și demonstrația teoremei.
+\end{proof}
+
+
+\begin{prop}
+    Fie $\Gamma \cup \{\varphi, \psi\} \subseteq Form$. Presupunem că $\varphi \sim \psi$. Atunci
+    \[
+        \Gamma \vdash \varphi \iff \Gamma \vdash \psi.
+    \]
+\end{prop}
+
+Fie $\Gamma$ o mulțime de formule.
+
+\begin{definition}
+    \begin{itemize}
+        \item O evaluare $e : V \to \{0, 1\}$ este \textbf{model} al lui $\Gamma$ dacă este model al fiecărei formule din $\Gamma$ (adică $e \models \gamma$ pentru orice $\gamma \in \Gamma$).
+        
+              Notație: $e \models \Gamma$. Mulțimea tuturor modelelor lui $\Gamma$ se notează $Mod(\Gamma)$.
+              
+        \item $\Gamma$ este \textbf{satisfiabilă} dacă are un model.
+        
+        \item Dacă $\Gamma$ nu este satisfiabilă, spunem și că $\Gamma$ este \textbf{nesatisfiabilă} sau \textbf{contradictorie}.
+    \end{itemize}
+\end{definition}
+
+
+\begin{prop}
+    Fie $\Gamma$ o mulțime de formule. Următoarele afirmații sunt echivalente:
+    \begin{enumerate}
+        \item[(i)] $\Gamma$ este nesatisfiabilă.
+        \item[(ii)] $\Gamma \models \varphi$ pentru orice formulă $\varphi$.
+        \item[(iii)] $\Gamma \models \varphi$ pentru orice formulă nesatisfiabilă $\varphi$.
+        \item[(iv)] $\Gamma \models \bot$.
+    \end{enumerate}
+\end{prop}
+
+\begin{definition}
+    Fie $\Gamma$ o mulțime de formule.
+    \begin{itemize}
+        \item $\Gamma$ este \textbf{consistentă} dacă există o formulă $\varphi$ astfel încât $\Gamma \not\vdash \varphi$.
+        \item $\Gamma$ este \textbf{inconsistentă} dacă nu este consistentă, adică, $\Gamma \vdash \varphi$ pentru orice formulă $\varphi$.
+    \end{itemize}
+\end{definition}
+
+\begin{prop}
+    \begin{enumerate}
+        \item[(i)] $\emptyset$ este consistentă.
+        \item[(ii)] Mulțimea teoremelor este consistentă.
+    \end{enumerate}
+\end{prop}
+
+\newpage
+
+\begin{prop}
+    Pentru o mulțime de formule $\Gamma$ sunt echivalente:
+    \begin{enumerate}
+        \item[(i)] $\Gamma$ este inconsistentă.
+        \item[(ii)] Pentru orice formulă $\psi$, $\Gamma \vdash \psi$ și $\Gamma \vdash \neg\psi$.
+        \item[(iii)] Există o formulă $\psi$ a.î. $\Gamma \vdash \psi$ și $\Gamma \vdash \neg\psi$.
+        \item[(iv)] $\Gamma \vdash \bot$.
+    \end{enumerate}
+\end{prop}
+
+\begin{theorem}[Teorema de completitudine tare]
+    Pentru orice mulțime de formule $\Gamma$,
+	\[\text{Versiunea 1:}\]
+    \[
+        \Gamma \text{ este consistentă} \iff \Gamma \text{ este satisfiabilă}.
+    \]
+	\[\text{Versiunea 2:}\]
+	\[
+        \Gamma \vdash \varphi \iff \Gamma \models \varphi.
+    \]
+\end{theorem}
