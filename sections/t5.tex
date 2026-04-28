@@ -1,1 +1,386 @@
 \chapter{Sintaxa LP. Introducere in Logica de Ordinul I}
+
+\section{Logică de Ordinul I}
+
+Logica de Ordinul I este o „construcție” peste logica propozițională care ne ajută să definim lucruri mult mai complexe.
+Practic, scopul logicii este să formalizeze lumea din jurul nostru, matematica, filosofia, etc. Până acum, puteam să definim concepte
+foarte inflexibile și puteam verifica adevărul doar unor texte simple. Un exemplu este afirmația "Dacă nu sunt taxiuri la gară și trenul întârzie, atunci Ion întârzie la întâlnire",
+care se poate împărți în adevăruri testabile, adică variabile propoziționale (care pot fi evaluate la 0 sau 1), pentru a fi scris ca o formulă a logicii propoziționale:
+
+\[
+	(\neg v_0 \land v_1) \to v_{2}
+\]
+
+Însă, pentru exemple mai complexe, LP nu surprinde suficient de bine înțelesul a ceea ce vrem să transmitem/să formalizăm. Un exemplu foarte bun este silogismul clasic:
+
+\begin{itemize}
+	\item Toți oamenii sunt muritori
+	\item Socrate este om.
+	\item Deci, Socrate este muritor.
+\end{itemize}
+
+Acest lucru este evident adevărat, și chiar am dori să fie evaluat mereu la adevăr în logica noastră, astfel încât logica să descrie perfect și formal realitatea. Însă LP nu are
+niciun mecanism de a lua cele 3 propoziții (variabile propoziționale) și de a face legătura între informația lor comună: "oameni", "Socrate", "muritor". Aici intervine
+Logica de ordin I. Aceasta ia tot ce am învățat despre logica propozițională (variabile, formule, semantică și sintaxă), și peste asta adaugă noi elemente care ne ajută
+să definim structura/logică internă a propozițiilor. Practic, ni se introduce un nou vocabular care ne ajută să dăm sens, acesta fiind formalizat ca \( Sim_{\mathcal{L}} \),
+adică simbolurile limbajului de ordin I.
+
+Mai exact, un limbaj \( \mathcal{L} \) de ordin I este format din:
+
+\begin{itemize}
+
+	\item Tot ce conține LP:
+
+	      \begin{itemize}
+
+		      \item O mulțime numărabilă de variabile \( V_n \)
+		      \item Conectorii logici \( \neg, \to \) (Din care putem defini și echivalența, \( \land \) și \( \lor \))
+		      \item Parantezele \( (, ) \)
+
+	      \end{itemize}
+
+	\item Concepte specifice pentru Logica de ordin I:
+
+	      \begin{itemize}
+
+		      \item Simbolul de egalitate = (care ne arată că două lucruri sunt egale)
+		      \item Cuantificatorul universal \( \forall \) (din care putem deriva și \( \exists \))
+		      \item O mulțime de simboluri de relații \( \mathcal{R} \). (Practic verbe și adjective care ne ajută să descriem relații între unul sau mai multe concepte. De exemplu "<" este o relație
+		            de aritate 2 (ia două argumente). Putem să definim și relații mai complexe, cum ar fi Om(\( x \)), care simbolizează că \( x \) este om).
+		      \item O mulțime de simboluri de funcții \( \mathcal{F} \). (Practic iau un concept/obiect și îl transformă într-un alt obiect. Un exemplu ar fi MamaLui(x) care este tot un om, creat de la x).
+		      \item O mulțime de simboluri de constante \( \mathcal{C} \). (Practic substantivele, lucrurile care desemnează obiecte specifice dintr-o lume.)
+		      \item O funcție \( ari : \mathcal{F} \cup \mathcal{R} \to \mathbb{N}^* \) care ne arată aritatea unei funcții sau a unei relații.
+
+	      \end{itemize}
+
+\end{itemize}
+
+Limbajul este practic lumea conceptelor noastre și a regulilor pe care le folosim. Orice limbaj este determinat de cvadruplul:
+
+\[
+	\tau \coloneqq  (\mathcal{R}, \mathcal{F}, \mathcal{C}, ari)
+\]
+
+Acesta este numit vocabularul/alfabetul lui \( \mathcal{L} \).
+
+\begin{eg}
+	Pentru silogismul anterior, ne putem defini propriul nostru limbaj (signatura). Vom avea:
+
+	\begin{itemize}
+		\item \( \mathcal{C} = \{\mathrm{socrate}\} \) (o constantă pentru obiectul nostru specific)
+		\item \( \mathcal{R} = \{\mathrm{Om}, \mathrm{Muritor}\} \) (relațiile sau proprietățile)
+		\item \( ari(\mathrm{Om}) = 1, \; ari(\mathrm{Muritor}) = 1 \) (relații unare: se aplică unui singur argument. Ex: $\mathrm{Om}(x)$)
+		\item \( \mathcal{F} = \emptyset \) (nu avem nevoie să generăm obiecte noi prin funcții)
+	\end{itemize}
+
+	Având acest dicționar la dispoziție, putem să traducem întregul
+	raționa\-ment din limbaj natural în logica de ordinul I:
+
+	\begin{align*}
+		\text{Toți oamenii sunt muritori} \qquad & \forall x (\mathrm{Om}(x) \to \mathrm{Muritor}(x)) \\[1ex]
+		\text{Socrate este om} \qquad            & \mathrm{Om}(\mathrm{socrate})                      \\[1ex]
+		\text{Deci, Socrate este muritor} \qquad & \mathrm{Muritor}(\mathrm{socrate})
+	\end{align*}
+\end{eg}
+
+\subsection{Termeni}
+
+După ce am fixat limbajul, primul lucru cu care lucrăm sunt \textbf{termenii}. Intuitiv, un termen este o expresie care desemnează un obiect din lumea despre care vorbim.
+Termenii nu sunt adevărați sau falși. Ei sunt mai degrabă ``nume'' pentru obiecte.
+
+De exemplu, în aritmetică:
+\[
+	x, \qquad 0, \qquad S(x), \qquad x + y, \qquad S(S(0))
+\]
+sunt termeni. Aceștia reprezintă obiecte: variabila \(x\), numărul \(0\), succesorul lui \(x\), suma dintre \(x\) și \(y\), respectiv numărul \(2\).
+
+\begin{definition}
+	Termenii unui limbaj \( \mathcal{L} \) sunt construiți astfel:
+
+	\begin{description}
+		\item[(T0)] Orice variabilă este termen.
+		\item[(T1)] Orice simbol de constantă este termen.
+		\item[(T2)] Dacă \(f\) este un simbol de funcție de aritate \(m\), iar \(t_1, \dots, t_m\) sunt termeni, atunci
+		      \[
+			      f(t_1, \dots, t_m)
+		      \]
+		      este termen.
+	\end{description}
+\end{definition}
+
+Partea importantă este că funcțiile produc termeni noi din termeni vechi. Asta este foarte asemănător cu felul în care în programare construim expresii:
+\[
+	\mathrm{mama}(x), \qquad \mathrm{tata}(\mathrm{mama}(x)), \qquad g(f(x), y).
+\]
+
+În schimb, expresii precum
+\[
+	\mathrm{Om}(x), \qquad x < y, \qquad \forall x \, \mathrm{Om}(x)
+\]
+nu sunt termeni. Primele două sunt formule atomice, iar ultima este formulă cuantificată. Ele nu desemnează obiecte, ci spun ceva despre obiecte.
+
+\begin{definition}
+	Un termen \(t\) se numește \textbf{închis} dacă nu conține variabile.
+\end{definition}
+
+De exemplu, în limbajul aritmeticii, \(S(S(0))\) este termen închis, dar \(S(x)\) nu este termen închis. Intuiția este că termenii închiși numesc obiecte complet determinate.
+\(S(S(0))\) este \(2\), pe când \(S(x)\) depinde de valoarea pe care o va primi \(x\).
+
+\begin{eg}
+	Considerăm limbajul aritmeticii:
+	\[
+		L_{ar} = (\dot{<}; \dot{+}, \dot{\times}, \dot{S}; \dot{0}).
+	\]
+
+	Atunci următoarele sunt termeni:
+	\[
+		x, \qquad \dot{0}, \qquad \dot{S}(x), \qquad x \dot{+} \dot{S}(\dot{0}), \qquad \dot{S}(\dot{S}(\dot{0})).
+	\]
+
+	Ultimul termen este închis. Termenul \(x \dot{+} \dot{S}(\dot{0})\) nu este închis, deoarece conține variabila \(x\).
+\end{eg}
+
+\subsection{Formule}
+
+Termenii sunt obiectele despre care vorbim. Formulele sunt propozițiile pe care le putem evalua ca adevărate sau false, după ce alegem o interpretare.
+În logica propozițională formulele porneau de la variabile propoziționale. În logica de ordinul I formulele pornesc de la \textbf{formule atomice}.
+
+\begin{definition}
+	Formulele atomice ale unui limbaj \( \mathcal{L} \) sunt de două tipuri:
+
+	\begin{description}
+		\item[Egalități:] \(s = t\), unde \(s\) și \(t\) sunt termeni.
+		\item[Relații:] \(R(t_1, \dots, t_m)\), unde \(R\) este un simbol de relație de aritate \(m\), iar \(t_1, \dots, t_m\) sunt termeni.
+	\end{description}
+\end{definition}
+
+Aici apare diferența practică dintre funcții și relații:
+
+\begin{itemize}
+	\item o funcție produce un obiect, deci apare în interiorul unui termen;
+	\item o relație produce o afirmație, deci apare ca formulă atomică.
+\end{itemize}
+
+De exemplu:
+\[
+	\mathrm{mama}(x)
+\]
+este termen, fiindcă desemnează un obiect: mama lui \(x\). În schimb:
+\[
+	\mathrm{Om}(x)
+\]
+este formulă atomică, fiindcă spune că \(x\) are proprietatea de a fi om.
+
+\begin{definition}
+	Formulele unui limbaj \( \mathcal{L} \) se construiesc astfel:
+
+	\begin{description}
+		\item[(F0)] Orice formulă atomică este formulă.
+		\item[(F1)] Dacă \( \varphi \) este formulă, atunci \( \neg \varphi \) este formulă.
+		\item[(F2)] Dacă \( \varphi, \psi \) sunt formule, atunci \( \varphi \to \psi \) este formulă.
+		\item[(F3)] Dacă \( \varphi \) este formulă și \(x\) este variabilă, atunci \( \forall x \varphi \) este formulă.
+	\end{description}
+\end{definition}
+
+Ca în logica propozițională, conectorii \( \lor, \land, \leftrightarrow \) sunt considerați abrevieri:
+\[
+	\varphi \lor \psi := \neg \varphi \to \psi,
+	\qquad
+	\varphi \land \psi := \neg(\varphi \to \neg \psi),
+	\qquad
+	\varphi \leftrightarrow \psi := (\varphi \to \psi) \land (\psi \to \varphi).
+\]
+
+În plus, cuantificatorul existențial se definește prin cuantificatorul universal:
+\[
+	\exists x \varphi := \neg \forall x \neg \varphi.
+\]
+
+Această definiție formalizează exact intuiția: ``există un \(x\) cu proprietatea \(\varphi\)''
+înseamnă că nu este adevărat că toate \(x\)-urile nu au proprietatea \(\varphi\).
+
+\begin{eg}
+	În limbajul pentru silogismul cu Socrate, următoarele sunt formule:
+	\[
+		\mathrm{Om}(\mathrm{socrate}),
+		\qquad
+		\mathrm{Muritor}(\mathrm{socrate}),
+		\qquad
+		\forall x(\mathrm{Om}(x) \to \mathrm{Muritor}(x)).
+	\]
+
+	Prima formulă spune că Socrate este om. A doua spune că Socrate este muritor. A treia spune că orice obiect care este om este și muritor.
+\end{eg}
+
+\begin{note}[Termeni vs formule]
+	O greșeală foarte comună este să amestecăm termenii cu formulele.
+
+	\begin{itemize}
+		\item \(f(x)\) este termen, deci poate fi argument pentru o relație: \(R(f(x))\).
+		\item \(R(x)\) este formulă, deci poate fi negată sau cuantificată: \(\neg R(x)\), \(\forall x R(x)\).
+		\item Nu are sens să scriem \(f(R(x))\), dacă \(f\) așteaptă obiecte, fiindcă \(R(x)\) nu este obiect.
+	\end{itemize}
+\end{note}
+
+\subsection{Convenții de scriere}
+
+În curs, definițiile sunt date foarte formal, folosind notația prefixată:
+\[
+	ft_1 \dots t_m, \qquad Rt_1 \dots t_m.
+\]
+
+În practică, scriem aproape mereu:
+\[
+	f(t_1, \dots, t_m), \qquad R(t_1, \dots, t_m).
+\]
+
+Pentru simbolurile binare, folosim de multe ori notația obișnuită:
+\[
+	t_1 \dot{+} t_2 \quad \text{în loc de} \quad \dot{+}(t_1,t_2),
+	\qquad
+	t_1 \dot{<} t_2 \quad \text{în loc de} \quad \dot{<}(t_1,t_2).
+\]
+
+De asemenea, cuantificatorii au precedență mare. Asta înseamnă că:
+\[
+	\forall x \varphi \to \psi
+\]
+se citește ca:
+\[
+	(\forall x \varphi) \to \psi,
+\]
+nu ca:
+\[
+	\forall x(\varphi \to \psi).
+\]
+
+Această convenție contează foarte mult, pentru că cele două formule spun lucruri diferite. Prima spune: dacă toate obiectele au proprietatea \(\varphi\), atunci \(\psi\).
+A doua spune: pentru orice obiect \(x\), dacă \(x\) are proprietatea \(\varphi\), atunci \(\psi\).
+
+\begin{ex}
+	În limbajul aritmeticii \(L_{ar}\), decideți care dintre următoarele expresii sunt termeni și care sunt formule:
+	\[
+		\dot{S}(x), \qquad x \dot{<} \dot{S}(y), \qquad \dot{S}(x) = y, \qquad \forall x(x \dot{<} \dot{S}(x)).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Avem:
+
+	\begin{itemize}
+		\item \(\dot{S}(x)\) este termen, deoarece \(\dot{S}\) este simbol de funcție unară aplicat termenului \(x\).
+		\item \(x \dot{<} \dot{S}(y)\) este formulă atomică, deoarece \(\dot{<}\) este simbol de relație binară aplicat la doi termeni.
+		\item \(\dot{S}(x) = y\) este formulă atomică, deoarece egalitatea se aplică între doi termeni.
+		\item \(\forall x(x \dot{<} \dot{S}(x))\) este formulă, obținută prin cuantificarea universală a formulei atomice \(x \dot{<} \dot{S}(x)\).
+	\end{itemize}
+\end{solutie}
+
+\subsection{\( \mathcal{L} \)-structuri}
+
+Până acum am descris doar sintaxa: ce simboluri avem și cum avem voie să le combinăm. Dar simbolurile nu au încă un sens concret.
+De exemplu, simbolul \(\dot{+}\) nu este automat adunarea obișnuită. Este doar un simbol de funcție binară. Ca să capete sens, trebuie să alegem o structură.
+
+\begin{definition}
+	O \( \mathcal{L} \)-structură \( \mathcal{A} \) constă în:
+
+	\begin{itemize}
+		\item o mulțime nevidă \(A\), numită \textbf{universul} structurii;
+		\item pentru fiecare simbol de funcție \(f\), o funcție concretă \(f^\mathcal{A}\) pe \(A\);
+		\item pentru fiecare simbol de relație \(R\), o relație concretă \(R^\mathcal{A}\) pe \(A\);
+		\item pentru fiecare simbol de constantă \(c\), un element concret \(c^\mathcal{A} \in A\).
+	\end{itemize}
+\end{definition}
+
+Practic, limbajul este dicționarul, iar structura este o lume în care interpretăm dicționarul.
+
+Aceeași formulă poate fi analizată în structuri diferite. De exemplu, formula:
+\[
+	\forall x \exists y \; x \dot{<} y
+\]
+are un comportament natural diferit în \((\mathbb{N}, <)\) față de o mulțime finită cu ordinea obișnuită. În \(\mathbb{N}\), pentru orice număr există unul mai mare.
+Într-o mulțime finită ordonată, elementul maxim nu are un element mai mare decât el.
+
+\begin{eg}[Limbajul egalității]
+	Limbajul egalității nu are simboluri non-logice:
+	\[
+		L_= = (\emptyset, \emptyset, \emptyset).
+	\]
+
+	Structurile pentru acest limbaj sunt doar mulțimi nevide. Putem exprima proprietăți care țin doar de egalitate, nu de operații sau relații externe.
+
+	De exemplu, formula:
+	\[
+		\exists x \exists y \exists z(\neg(x = y) \land \neg(y = z) \land \neg(z = x))
+	\]
+	spune că universul are cel puțin trei elemente.
+\end{eg}
+
+\begin{eg}[Limbajul aritmeticii]
+	Limbajul aritmeticii este:
+	\[
+		L_{ar} = (\dot{<}; \dot{+}, \dot{\times}, \dot{S}; \dot{0}).
+	\]
+
+	Structura naturală este:
+	\[
+		\mathbb{N} = (\mathbb{N}, <, +, \cdot, S, 0),
+	\]
+	unde \(S(n) = n + 1\).
+
+	Aici simbolurile cu punct sunt simboluri din limbaj, iar cele fără punct sunt interpretările lor concrete:
+	\[
+		\dot{<}^{\mathbb{N}} = <, \qquad
+		\dot{+}^{\mathbb{N}} = +, \qquad
+		\dot{\times}^{\mathbb{N}} = \cdot, \qquad
+		\dot{0}^{\mathbb{N}} = 0.
+	\]
+
+	Punctul este util fiindcă separă sintaxa de semantică: \(\dot{+}\) este simbolul scris în formulă, iar \(+\) este operația reală de adunare.
+\end{eg}
+
+\begin{eg}[Limbajul grafurilor]
+	Pentru grafuri folosim de obicei un limbaj cu un singur simbol de relație binară:
+	\[
+		L_{Graf} = (\dot{E}; \emptyset; \emptyset).
+	\]
+
+	O \(L_{Graf}\)-structură este o mulțime nevidă de vârfuri \(V\), împreună cu o relație binară \(E \subseteq V \times V\).
+	Intuitiv, \(\dot{E}(x,y)\) spune că există muchie de la \(x\) la \(y\).
+
+	De exemplu, formula:
+	\[
+		\exists x \exists y \exists z(\dot{E}(x,y) \land \dot{E}(y,z))
+	\]
+	spune că există un drum de lungime \(2\).
+\end{eg}
+
+\begin{eg}[Limbajul grupurilor]
+	Pentru grupuri folosim limbajul:
+	\[
+		L_{Gr} = (\emptyset; \dot{*}, \dot{\mathrm{inv}}; \dot{e}).
+	\]
+
+	Structura naturală pentru un grup \(G\) este:
+	\[
+		(G, \cdot, \mathrm{inv}, e),
+	\]
+	unde \(\dot{*}\) se interpretează ca operația grupului, \(\dot{\mathrm{inv}}\) ca funcția care ia inversul, iar \(\dot{e}\) ca elementul neutru.
+
+	De exemplu, comutativitatea se poate scrie:
+	\[
+		\forall x \forall y \; x \dot{*} y = y \dot{*} x.
+	\]
+\end{eg}
+
+\begin{note}
+	Până la semantică, nu calculăm încă dacă o formulă este adevărată într-o structură. Deocamdată vrem doar să știm:
+
+	\begin{itemize}
+		\item care sunt simbolurile limbajului;
+		\item ce expresii sunt termeni;
+		\item ce expresii sunt formule;
+		\item ce înseamnă să alegem o structură pentru limbaj.
+	\end{itemize}
+
+	Asta este scheletul pe care se construiește apoi interpretarea formulelor.
+\end{note}
