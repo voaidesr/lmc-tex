@@ -1,2 +1,618 @@
 
 \chapter{Semantica Logicii de ordin I}
+
+Până acum am construit limbaje de ordinul I doar sintactic: am spus ce simboluri avem, ce înseamnă să fie ceva termen, ce înseamnă să fie ceva formulă și cum arată o
+\(\mathcal{L}\)-structură. Acum vrem să facem pasul natural: să dăm \textbf{sens} formulelor.
+
+În logica propozițională semantica era foarte simplă: o evaluare era o funcție
+\[
+	e : V \to \{0,1\}.
+\]
+Adică fiecare variabilă propozițională primea direct o valoare de adevăr.
+
+În logica de ordin I lucrurile sunt mai bogate. Variabilele nu mai sunt propoziții, ci reprezintă \textbf{obiecte}. De aceea, o evaluare nu mai trimite variabilele în
+\(\{0,1\}\), ci în universul structurii despre care vorbim.
+
+\begin{note}[Cele două niveluri]
+	Semantica logicii de ordin I are două niveluri:
+	\begin{itemize}
+		\item \textbf{structura} \( \mathcal{A} \), care interpretează simbolurile limbajului: constantele devin obiecte, funcțiile devin funcții reale, relațiile devin relații reale;
+		\item \textbf{evaluarea} \( e : V \to A \), care dă valori variabilelor.
+	\end{itemize}
+
+	Practic, limbajul este dicționarul, structura este lumea în care citim dicționarul, iar evaluarea spune ce obiecte au variabilele în momentul în care citim formula.
+\end{note}
+
+\section{Evaluări și interpretarea termenilor}
+
+Fixăm un limbaj de ordinul I \( \mathcal{L} \) și o \( \mathcal{L} \)-structură \( \mathcal{A} \), cu universul \(A\).
+
+\begin{definition}
+	O \textbf{interpretare} sau \textbf{evaluare} a variabilelor lui \( \mathcal{L} \) în \( \mathcal{A} \) este o funcție
+	\[
+		e : V \to A.
+	\]
+\end{definition}
+
+Intuitiv, dacă \(A\) este mulțimea oamenilor, atunci o evaluare poate spune că \(e(x)=\text{Ana}\), \(e(y)=\text{Bogdan}\), etc.
+
+Pentru cuantificatori avem nevoie să modificăm o evaluare într-un singur punct.
+
+\begin{definition}
+	Pentru orice variabilă \(x\) și orice element \(a \in A\), definim evaluarea \(e_{x \mapsto a} : V \to A\) prin:
+	\[
+		e_{x \mapsto a}(v) =
+		\begin{cases}
+			e(v), & \text{dacă } v \neq x, \\
+			a,    & \text{dacă } v = x.
+		\end{cases}
+	\]
+\end{definition}
+
+Adică \(e_{x \mapsto a}\) este exact ca \(e\), doar că îi schimbăm valoarea lui \(x\). Acesta este mecanismul formal din spatele expresiei ``pentru orice \(x\)''.
+
+\subsection{Interpretarea termenilor}
+
+Termenii sunt expresii care desemnează obiecte. După ce alegem o structură și o evaluare, orice termen trebuie să devină un element concret din \(A\).
+
+\begin{definition}
+	Interpretarea unui termen \(t\) în structura \( \mathcal{A} \), sub evaluarea \(e\), se notează \(t^\mathcal{A}(e)\) și se definește recursiv:
+
+	\begin{description}
+		\item[(T0)] dacă \(t = x\), unde \(x\) este variabilă, atunci
+			\[
+				t^\mathcal{A}(e) := e(x);
+			\]
+		\item[(T1)] dacă \(t = c\), unde \(c\) este simbol de constantă, atunci
+			\[
+				t^\mathcal{A}(e) := c^\mathcal{A};
+			\]
+		\item[(T2)] dacă \(t = f(t_1,\dots,t_m)\), atunci
+			\[
+				t^\mathcal{A}(e) := f^\mathcal{A}\left(t_1^\mathcal{A}(e),\dots,t_m^\mathcal{A}(e)\right).
+			\]
+	\end{description}
+\end{definition}
+
+Acest lucru seamnănă exact cu evaluarea expresiilor de către limbajele de programare: variabilele își iau valorile pe care le asignăm (în cazul nostru, prin evaluare), constantele au valori fixe, iar funcțiile
+se aplică pe rezultatele subexpresiilor.
+
+\begin{eg}
+	Considerăm un limbaj cu un simbol de constantă \( \dot{a} \), un simbol de funcție unară \( \dot{f} \) și un simbol de funcție binară \( \dot{g} \).
+
+	Luăm structura \( \mathcal{A} \) cu universul \(A = \mathbb{N}\), unde:
+	\[
+		\dot{a}^{\mathcal{A}} = 2, \qquad
+		\dot{f}^{\mathcal{A}}(n) = n + 3, \qquad
+		\dot{g}^{\mathcal{A}}(m,n) = m \cdot n.
+	\]
+
+	Fie termenul
+	\[
+		t = \dot{g}(\dot{f}(x), \dot{a}).
+	\]
+
+	Dacă \(e(x)=4\), atunci:
+	\[
+		t^\mathcal{A}(e)
+		= \dot{g}^{\mathcal{A}}\left(\dot{f}^{\mathcal{A}}(e(x)), \dot{a}^{\mathcal{A}}\right)
+		= \dot{g}^{\mathcal{A}}(7,2)
+		= 14.
+	\]
+\end{eg}
+
+\begin{note}
+	Dacă \(t\) este termen închis, adică nu conține variabile, atunci \(t^\mathcal{A}(e)\) nu depinde de evaluarea \(e\). De exemplu, valoarea lui
+	\(\dot{f}(\dot{a})\) este aceeași indiferent ce valori dăm variabilelor, pentru că termenul nu folosește nicio variabilă.
+\end{note}
+
+\section{Interpretarea formulelor}
+
+Termenii se evaluează în obiecte. Formulele se evaluează în valori de adevăr.
+
+Mai exact, pentru o formulă \( \varphi \), structura \( \mathcal{A} \) și evaluarea \(e\), vrem să definim:
+\[
+	\varphi^\mathcal{A}(e) \in \{0,1\}.
+\]
+
+\begin{definition}
+	Interpretarea formulelor se definește recursiv astfel:
+
+	\begin{description}
+		\item[Egalitate:] pentru doi termeni \(s,t\),
+			\[
+				(s=t)^\mathcal{A}(e) =
+				\begin{cases}
+					1, & \text{dacă } s^\mathcal{A}(e)=t^\mathcal{A}(e), \\
+					0, & \text{altfel.}
+				\end{cases}
+			\]
+
+		\item[Relații:] dacă \(R\) este un simbol de relație de aritate \(m\), atunci
+			\[
+				(R(t_1,\dots,t_m))^\mathcal{A}(e) =
+				\begin{cases}
+					1, & \text{dacă } (t_1^\mathcal{A}(e),\dots,t_m^\mathcal{A}(e)) \in R^\mathcal{A}, \\
+					0, & \text{altfel.}
+				\end{cases}
+			\]
+
+		\item[Negație:]
+			\[
+				(\neg \varphi)^\mathcal{A}(e) = 1 - \varphi^\mathcal{A}(e).
+			\]
+
+		\item[Implicație:]
+			\[
+				(\varphi \to \psi)^\mathcal{A}(e) = \varphi^\mathcal{A}(e) \to \psi^\mathcal{A}(e),
+			\]
+			unde implicația din dreapta este implicația booleană obișnuită.
+
+		\item[Cuantificator universal:]
+			\[
+				(\forall x \varphi)^\mathcal{A}(e) =
+				\begin{cases}
+					1, & \text{dacă } \varphi^\mathcal{A}(e_{x \mapsto a}) = 1 \text{ pentru orice } a \in A, \\
+					0, & \text{altfel.}
+				\end{cases}
+			\]
+	\end{description}
+\end{definition}
+
+Partea nouă față de LP este doar cuantificatorul universal. Formula \( \forall x \varphi \) este adevărată dacă, indiferent cu ce obiect \(a\) înlocuim temporar valoarea
+lui \(x\), formula \( \varphi \) rămâne adevărată.
+
+\begin{note}[Cum citim cuantificatorii]
+	Când vedeți
+	\[
+		\forall x \exists y \; \varphi(x,y),
+	\]
+	citirea corectă este:
+
+	\begin{quote}
+		pentru orice alegere a lui \(x\), pot găsi o alegere a lui \(y\), posibil dependentă de \(x\), astfel încât \(\varphi(x,y)\) să fie adevărată.
+	\end{quote}
+
+	Nu este același lucru cu
+	\[
+		\exists y \forall x \; \varphi(x,y),
+	\]
+	unde trebuie să găsim un singur \(y\) care funcționează pentru toate valorile lui \(x\).
+\end{note}
+
+\subsection{Exemple de evaluare}
+
+\begin{eg}
+	Considerăm limbajul cu un simbol de relație unară \( \dot{P} \), un simbol de funcție unară \( \dot{f} \) și o constantă \( \dot{a} \).
+
+	Luăm structura \( \mathcal{A} \) cu:
+	\[
+		A = \{0,1,2\}, \qquad
+		\dot{a}^{\mathcal{A}} = 0,
+	\]
+	\[
+		\dot{f}^{\mathcal{A}}(0)=1, \quad
+		\dot{f}^{\mathcal{A}}(1)=2, \quad
+		\dot{f}^{\mathcal{A}}(2)=2,
+	\]
+	și
+	\[
+		\dot{P}^{\mathcal{A}} = \{1,2\}.
+	\]
+
+	Vrem să vedem dacă
+	\[
+		\mathcal{A} \models \forall x(\dot{P}(x) \to \dot{P}(\dot{f}(x))).
+	\]
+
+	Verificăm toate valorile posibile ale lui \(x\):
+	\begin{itemize}
+		\item pentru \(x=0\), \( \dot{P}(0) \) este falsă, deci implicația este adevărată;
+		\item pentru \(x=1\), \( \dot{P}(1) \) este adevărată și \( \dot{f}(1)=2 \), iar \( \dot{P}(2) \) este adevărată;
+		\item pentru \(x=2\), \( \dot{P}(2) \) este adevărată și \( \dot{f}(2)=2 \), deci concluzia rămâne adevărată.
+	\end{itemize}
+
+	Prin urmare,
+	\[
+		\mathcal{A} \models \forall x(\dot{P}(x) \to \dot{P}(\dot{f}(x))).
+	\]
+
+	În schimb,
+	\[
+		\mathcal{A} \not\models \forall x\dot{P}(x),
+	\]
+	deoarece \(0 \notin \dot{P}^{\mathcal{A}}\).
+\end{eg}
+
+\begin{ex}
+	Considerăm limbajul grafurilor, cu un singur simbol de relație binară \( \dot{E} \).
+
+	Fie structura \( \mathcal{G} \) cu universul
+	\[
+		G = \{a,b,c\}
+	\]
+	și relația
+	\[
+		\dot{E}^{\mathcal{G}} = \{(a,b), (b,c)\}.
+	\]
+
+	Decideți dacă sunt adevărate în \( \mathcal{G} \) formulele:
+	\[
+		\varphi := \exists x \exists y \exists z(\dot{E}(x,y) \land \dot{E}(y,z))
+	\]
+	și
+	\[
+		\psi := \forall x \exists y \dot{E}(x,y).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Formula \( \varphi \) spune că există un drum de lungime \(2\). Este adevărată: luăm \(x=a\), \(y=b\), \(z=c\). Avem \((a,b) \in \dot{E}^{\mathcal{G}}\)
+	și \((b,c) \in \dot{E}^{\mathcal{G}}\), deci
+	\[
+		\mathcal{G} \models \varphi.
+	\]
+
+	Formula \( \psi \) spune că fiecare nod are cel puțin o muchie care pleacă din el. Aceasta este falsă, deoarece din \(c\) nu pleacă nicio muchie. Deci
+	\[
+		\mathcal{G} \not\models \psi.
+	\]
+\end{solutie}
+
+\section{Modele, satisfiabilitate și validitate}
+
+Acum introducem notațiile standard. Ele seamănă cu cele din LP, dar trebuie să fim atenți că acum adevărul depinde de o structură și de o evaluare.
+
+\begin{definition}
+	Fie \( \mathcal{A} \) o \( \mathcal{L} \)-structură, \(e : V \to A\) o evaluare și \( \varphi \) o formulă.
+
+	\begin{itemize}
+		\item Spunem că \(e\) \textbf{satisface} formula \( \varphi \) în \( \mathcal{A} \) dacă
+		      \[
+			      \varphi^\mathcal{A}(e)=1.
+		      \]
+		      Notăm:
+		      \[
+			      \mathcal{A} \models \varphi[e].
+		      \]
+
+		\item Spunem că \( (\mathcal{A}, e) \) este \textbf{model} al lui \( \varphi \) dacă \( \mathcal{A} \models \varphi[e] \).
+
+		\item Formula \( \varphi \) este \textbf{satisfiabilă} dacă are un model, adică există \( \mathcal{A} \) și \(e\) astfel încât
+		      \[
+			      \mathcal{A} \models \varphi[e].
+		      \]
+
+		\item Formula \( \varphi \) este \textbf{nesatisfiabilă} dacă nu are niciun model. Spunem și că este \textbf{contradictorie}.
+	\end{itemize}
+\end{definition}
+
+\begin{definition}
+	Spunem că \( \varphi \) este \textbf{adevărată} în structura \( \mathcal{A} \) dacă pentru orice evaluare \(e : V \to A\),
+	\[
+		\mathcal{A} \models \varphi[e].
+	\]
+	Notăm:
+	\[
+		\mathcal{A} \models \varphi.
+	\]
+\end{definition}
+
+\begin{note}
+	Dacă toate aparițiile variabilelor dintr-o formulă sunt sub cuantificatori, evaluarea inițială nu mai contează. De exemplu, adevărul formulei
+	\[
+		\forall x \exists y R(x,y)
+	\]
+	depinde de structura aleasă, nu de ce valori avea inițial \(e(x)\) sau \(e(y)\), pentru că \( \forall x \) și \( \exists y \) le resetează prin evaluări de forma
+	\(e_{x \mapsto a}\), respectiv \(e_{y \mapsto b}\).
+\end{note}
+
+\begin{definition}
+	Spunem că \( \varphi \) este \textbf{universal adevărată} sau \textbf{validă logic} dacă este adevărată în orice \( \mathcal{L} \)-structură:
+	\[
+		\models \varphi.
+	\]
+\end{definition}
+
+\begin{note}
+	În LP spuneam des ``tautologie''. În logica de ordin I, termenul standard este \textbf{formulă validă}. Diferența este importantă: acum formula trebuie să fie adevărată
+	în orice structură, indiferent cum interpretăm relațiile, funcțiile și constantele.
+\end{note}
+
+\begin{eg}
+	Formula
+	\[
+		\exists x(x=x)
+	\]
+	este validă. Motivul este că universul oricărei structuri este nevid, deci putem alege un element \(a \in A\), iar \(a=a\).
+
+	Formula
+	\[
+		\exists x \dot{P}(x)
+	\]
+	este satisfiabilă, dar nu este validă. Este satisfiabilă într-o structură în care \( \dot{P}^{\mathcal{A}} \neq \emptyset \), dar este falsă într-o structură în care
+	\( \dot{P}^{\mathcal{A}} = \emptyset \).
+\end{eg}
+
+\begin{note}[Adevărat în structură vs satisfiabil]
+	\begin{itemize}
+		\item O formulă satisfiabilă este adevărată într-o structură, sub o evaluare.
+		\item \( \mathcal{A} \models \varphi \) înseamnă că în lumea \( \mathcal{A} \), formula e adevărată pentru toate evaluările.
+		\item \( \models \varphi \) înseamnă că formula e adevărată în orice lume posibilă.
+	\end{itemize}
+
+	Aceste trei niveluri nu trebuie amestecate.
+\end{note}
+
+\section{Echivalență logică și consecință semantică}
+
+La fel ca în logica propozițională, vrem să comparăm formule după comportamentul lor semantic.
+
+\begin{definition}
+	Formulele \( \varphi \) și \( \psi \) sunt \textbf{logic echivalente}, notat
+	\[
+		\varphi \sim \psi,
+	\]
+	dacă pentru orice \( \mathcal{L} \)-structură \( \mathcal{A} \) și orice evaluare \(e : V \to A\),
+	\[
+		\mathcal{A} \models \varphi[e] \quad \text{ddacă} \quad \mathcal{A} \models \psi[e].
+	\]
+\end{definition}
+
+\begin{definition}
+	Formula \( \psi \) este \textbf{consecință semantică} a formulei \( \varphi \), notat
+	\[
+		\varphi \models \psi,
+	\]
+	dacă pentru orice \( \mathcal{L} \)-structură \( \mathcal{A} \) și orice evaluare \(e : V \to A\),
+	\[
+		\mathcal{A} \models \varphi[e] \implies \mathcal{A} \models \psi[e].
+	\]
+\end{definition}
+
+Mai general, dacă \( \Gamma \) este o mulțime de formule, scriem \( \Gamma \models \psi \) dacă orice structură și evaluare care satisfac toate formulele din
+\( \Gamma \) satisfac și \( \psi \).
+
+\begin{prop}
+	Pentru orice formule \( \varphi, \psi \):
+	\begin{enumerate}
+		\item \( \varphi \models \psi \) ddacă \( \models \varphi \to \psi \);
+		\item \( \varphi \sim \psi \) ddacă \( \models \varphi \leftrightarrow \psi \);
+		\item \( \varphi \sim \psi \) ddacă \( \varphi \models \psi \) și \( \psi \models \varphi \).
+	\end{enumerate}
+\end{prop}
+
+\begin{proof}
+	Toate cele trei puncte sunt doar rescrieri ale semanticii implicației și echivalenței. De exemplu, \( \varphi \models \psi \) spune că în orice structură și evaluare,
+	adevărul lui \( \varphi \) forțează adevărul lui \( \psi \), adică exact că \( \varphi \to \psi \) este adevărată peste tot.
+\end{proof}
+
+\begin{ex}
+	Fie limbajul cu o constantă \( \mathrm{socrate} \) și două relații unare \( \mathrm{Om} \), \( \mathrm{Muritor} \).
+	Arătați că:
+	\[
+		\{\forall x(\mathrm{Om}(x) \to \mathrm{Muritor}(x)), \mathrm{Om}(\mathrm{socrate})\}
+		\models
+		\mathrm{Muritor}(\mathrm{socrate}).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Fie \( \mathcal{A} \) o structură oarecare și \(e\) o evaluare oarecare care satisfac premisele.
+
+	Notăm
+	\[
+		s := \mathrm{socrate}^{\mathcal{A}}.
+	\]
+
+	Din \( \mathcal{A} \models \mathrm{Om}(\mathrm{socrate})[e] \), obținem că
+	\[
+		s \in \mathrm{Om}^{\mathcal{A}}.
+	\]
+
+	Din \( \mathcal{A} \models \forall x(\mathrm{Om}(x) \to \mathrm{Muritor}(x))[e] \), putem pune \(x := s\). Rezultă:
+	\[
+		\mathcal{A} \models \mathrm{Om}(x) \to \mathrm{Muritor}(x)[e_{x \mapsto s}].
+	\]
+
+	Cum \(s\) este om în structură, implicația ne dă că
+	\[
+		s \in \mathrm{Muritor}^{\mathcal{A}}.
+	\]
+
+	Asta înseamnă exact:
+	\[
+		\mathcal{A} \models \mathrm{Muritor}(\mathrm{socrate})[e].
+	\]
+
+	Deci orice model al premiselor este model al concluziei.
+\end{solutie}
+
+\section{Reguli utile cu cuantificatori}
+
+Multe exerciții de semantică se reduc la a citi corect cuantificatorii. Următoarele reguli sunt cele care apar cel mai des.
+
+\begin{prop}[Negația cuantificatorilor]
+	Pentru orice formulă \( \varphi \) și orice variabilă \(x\):
+	\[
+		\neg \exists x \varphi \sim \forall x \neg \varphi,
+		\qquad
+		\neg \forall x \varphi \sim \exists x \neg \varphi.
+	\]
+\end{prop}
+
+Intuitiv:
+\begin{itemize}
+	\item ``nu există \(x\) cu proprietatea \(\varphi\)'' înseamnă ``toate \(x\)-urile nu au proprietatea \(\varphi\)'';
+	\item ``nu toate \(x\)-urile au proprietatea \(\varphi\)'' înseamnă ``există un \(x\) care nu are proprietatea \(\varphi\)''.
+\end{itemize}
+
+\begin{prop}
+	Pentru orice formule \( \varphi, \psi \) și orice variabilă \(x\):
+	\[
+		\forall x(\varphi \land \psi) \sim \forall x\varphi \land \forall x\psi,
+	\]
+	\[
+		\exists x(\varphi \lor \psi) \sim \exists x\varphi \lor \exists x\psi.
+	\]
+\end{prop}
+
+Acestea sunt exact regulile naturale: ca fiecare obiect să satisfacă simultan \(\varphi\) și \(\psi\), trebuie ca fiecare obiect să satisfacă \(\varphi\) și fiecare obiect
+să satisfacă \(\psi\). Similar, ca să existe un obiect care satisface \(\varphi\) sau \(\psi\), este suficient și necesar să existe un obiect care satisface una dintre ele.
+
+\begin{prop}
+	Pentru orice formule \( \varphi, \psi \) și orice variabilă \(x\):
+	\[
+		\forall x\varphi \lor \forall x\psi \models \forall x(\varphi \lor \psi),
+	\]
+	\[
+		\exists x(\varphi \land \psi) \models \exists x\varphi \land \exists x\psi.
+	\]
+\end{prop}
+
+\begin{note}
+	Reciprocele nu sunt adevărate în general.
+
+	De exemplu, luăm o structură cu universul \(A=\{0,1\}\), unde
+	\[
+		P^\mathcal{A}=\{0\}, \qquad Q^\mathcal{A}=\{1\}.
+	\]
+
+	Atunci
+	\[
+		\mathcal{A} \models \forall x(P(x)\lor Q(x)),
+	\]
+	pentru că fiecare element este fie în \(P\), fie în \(Q\). Dar
+	\[
+		\mathcal{A} \not\models \forall xP(x)\lor \forall xQ(x),
+	\]
+	pentru că nu toate elementele sunt în \(P\) și nici nu sunt toate în \(Q\).
+
+	Similar,
+	\[
+		\mathcal{A} \models \exists xP(x)\land \exists xQ(x),
+	\]
+	dar
+	\[
+		\mathcal{A} \not\models \exists x(P(x)\land Q(x)).
+	\]
+	Există un element cu \(P\) și există un element cu \(Q\), dar nu există neapărat același element care să le aibă pe ambele.
+\end{note}
+
+\begin{prop}[Implicații cu cuantificatori]
+	Pentru orice formule \( \varphi, \psi \) și orice variabilă \(x\):
+	\[
+		\forall x(\varphi \to \psi) \models \forall x\varphi \to \forall x\psi,
+	\]
+	\[
+		\forall x(\varphi \to \psi) \models \exists x\varphi \to \exists x\psi.
+	\]
+\end{prop}
+
+Prima formulă spune: dacă fiecare obiect care satisface \(\varphi\) satisface și \(\psi\), atunci, dacă toate obiectele satisfac \(\varphi\), toate satisfac și \(\psi\).
+
+A doua formulă spune: dacă fiecare obiect care satisface \(\varphi\) satisface și \(\psi\), atunci existența unui obiect cu \(\varphi\) garantează existența unui obiect cu
+\(\psi\). Luăm același obiect.
+
+\begin{prop}[Reguli de bază]
+	Pentru orice formulă \( \varphi \) și orice variabilă \(x\):
+	\[
+		\forall x\varphi \models \varphi,
+		\qquad
+		\varphi \models \exists x\varphi,
+		\qquad
+		\forall x\varphi \models \exists x\varphi.
+	\]
+\end{prop}
+
+\begin{note}
+	Ultima regulă folosește faptul că universurile structurilor de ordin I sunt nevide. Dacă \(A\) nu ar avea niciun element, atunci ``pentru orice \(x\)''
+	ar fi adevărat trivial, dar ``există \(x\)'' ar fi fals. În curs, structurile au univers nevid, deci regula este validă.
+\end{note}
+
+\section{Ordinea cuantificatorilor}
+
+Cuantificatorii de același fel comută:
+\[
+	\forall x \forall y \varphi \sim \forall y \forall x \varphi,
+	\qquad
+	\exists x \exists y \varphi \sim \exists y \exists x \varphi.
+\]
+
+Pentru cuantificatori diferiți, ordinea contează.
+
+\begin{prop}
+	Pentru orice formulă \( \varphi \) și orice variabile distincte \(x,y\):
+	\[
+		\exists y \forall x \varphi \models \forall x \exists y \varphi.
+	\]
+\end{prop}
+
+Intuiția este simplă: dacă există un \(y\) care merge pentru toate valorile lui \(x\), atunci pentru fiecare \(x\) pot alege acel \(y\). Dar invers nu merge în general,
+pentru că în \( \forall x \exists y \varphi \), valoarea lui \(y\) are voie să depindă de valoarea lui \(x\).
+
+\begin{eg}
+	În limbajul egalității, formula
+	\[
+		\forall x \exists y (x = y)
+	\]
+	este validă. Pentru orice obiect \(x\), alegem \(y=x\).
+
+	În schimb,
+	\[
+		\exists y \forall x (x = y)
+	\]
+	nu este validă. Ea spune că există un singur obiect \(y\) egal cu toate obiectele din univers. Asta este adevărat doar în structurile cu un singur element.
+
+	De exemplu, în structura cu universul \(A=\{0,1\}\), formula este falsă: nici \(0\), nici \(1\) nu este egal cu toate elementele.
+\end{eg}
+
+\begin{ex}
+	Într-un limbaj cu o relație binară \(R\), considerați structura \( \mathcal{A} \) cu
+	\[
+		A = \{0,1,2\}
+	\]
+	și
+	\[
+		R^\mathcal{A} = \{(0,0),(1,1),(2,2)\}.
+	\]
+
+	Decideți care dintre formulele următoare sunt adevărate în \( \mathcal{A} \):
+	\[
+		\forall x \exists y R(x,y)
+		\qquad
+		\text{și}
+		\qquad
+		\exists y \forall x R(x,y).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Prima formulă este adevărată. Pentru fiecare \(x\), putem lua \(y=x\), iar \((x,x) \in R^\mathcal{A}\).
+
+	A doua formulă este falsă. Ar trebui să existe un singur \(y\) astfel încât \((0,y)\), \((1,y)\) și \((2,y)\) să fie toate în \(R^\mathcal{A}\).
+	Dar relația conține doar perechile diagonale, deci:
+	\[
+		(0,y) \in R^\mathcal{A} \implies y=0,
+	\]
+	\[
+		(1,y) \in R^\mathcal{A} \implies y=1,
+	\]
+	\[
+		(2,y) \in R^\mathcal{A} \implies y=2.
+	\]
+	Nu există un singur \(y\) care să fie simultan \(0\), \(1\) și \(2\).
+\end{solutie}
+
+\section{Egalitatea}
+
+Egalitatea din logica de ordin I este interpretată ca egalitatea reală dintre obiectele universului. De aceea, proprietățile obișnuite ale egalității sunt valide logic.
+
+\begin{prop}
+	Pentru orice termeni \(s,t,u\):
+	\begin{enumerate}
+		\item \( \models t = t \);
+		\item \( \models s = t \to t = s \);
+		\item \( \models (s = t \land t = u) \to s = u \).
+	\end{enumerate}
+\end{prop}
