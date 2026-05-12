@@ -1,0 +1,849 @@
+\chapter{Variabile libere, tautologii și substituții}
+
+În lecția trecută am dat semantica formulelor de ordinul I: o formulă se citește într-o structură \( \mathcal{A} \), sub o evaluare \(e\).
+
+În acest capitol ne axăm pe:
+\begin{itemize}
+	\item ce înseamnă ca o mulțime de formule să aibă model;
+	\item ce rămâne din tautologiile logicii propoziționale în logica de ordin I;
+	\item de ce adevărul unei formule depinde doar de variabilele ei libere;
+	\item cum facem substituții fără să stricăm sensul formulei.
+\end{itemize}
+
+Ultimul punct este cel mai important practic. Multe greșeli în logica de ordin I apar pentru că înlocuim o variabilă cu un termen și, fără să observăm, termenul ajunge prins de un cuantificator.
+
+\section{Modele pentru mulțimi de formule}
+
+\begin{definition}
+	Fie \( \Gamma \) o mulțime de formule. Spunem că perechea \( (\mathcal{A}, e) \) este \textbf{model} al lui \( \Gamma \) dacă satisface fiecare formulă din \( \Gamma \):
+	\[
+		\mathcal{A} \models \gamma[e]
+		\quad \text{pentru orice } \gamma \in \Gamma.
+	\]
+	Notăm acest lucru prin:
+	\[
+		\mathcal{A} \models \Gamma[e].
+	\]
+\end{definition}
+
+\begin{note}
+	Mulțimea \( \Gamma \) este \textbf{satisfiabilă} dacă are un model, adică dacă există o structură \( \mathcal{A} \) și o evaluare \(e\) astfel încât
+	\[
+		\mathcal{A} \models \Gamma[e].
+	\]
+
+	Dacă nu are niciun model, atunci \( \Gamma \) este \textbf{nesatisfiabilă} sau \textbf{contradictorie}.
+\end{note}
+
+
+\begin{note}
+	Fie \( \Gamma \) o mulțime de formule și \( \varphi \) o formulă. Spunem că \( \varphi \) este \textbf{consecință semantică} a lui \( \Gamma \), notat
+	\[
+		\Gamma \models \varphi,
+	\]
+	dacă orice model al lui \( \Gamma \) este și model al lui \( \varphi \). Formal, pentru orice structură \( \mathcal{A} \) și orice evaluare \(e\),
+	\[
+		\mathcal{A} \models \Gamma[e]
+		\implies
+		\mathcal{A} \models \varphi[e].
+	\]
+\end{note}
+
+Dacă \( \Delta \) este o altă mulțime de formule, scriem
+\[
+	\Gamma \models \Delta
+\]
+dacă
+\[
+	\Gamma \models \delta
+	\quad \text{pentru orice } \delta \in \Delta.
+\]
+
+\begin{eg}
+	Luăm limbajul cu două relații unare \( \mathrm{Student} \), \( \mathrm{Promovat} \) și o constantă \( \mathrm{ana} \).
+
+	Fie
+	\[
+		\Gamma =
+		\{
+		\forall x(\mathrm{Student}(x) \to \mathrm{Promovat}(x)),
+		\mathrm{Student}(\mathrm{ana})
+		\}.
+	\]
+
+	Atunci
+	\[
+		\Gamma \models \mathrm{Promovat}(\mathrm{ana}).
+	\]
+
+	Nu contează ce structură concretă luăm. Dacă în acea structură toți studenții sunt promovați și Ana este studentă, atunci Ana trebuie să fie promovată.
+\end{eg}
+
+\begin{prop}
+	Avem următoarele proprietăți simple:
+	\begin{enumerate}
+		\item \( \models \psi \) ddacă \( \emptyset \models \psi \);
+		\item dacă \( \Gamma \subseteq \Delta \) și \( \Gamma \models \psi \), atunci \( \Delta \models \psi \);
+		\item dacă \( \Gamma \models \Delta \) și \( \Delta \models \psi \), atunci \( \Gamma \models \psi \).
+	\end{enumerate}
+\end{prop}
+
+\begin{proof}
+	Prima afirmație spune doar că o formulă validă este adevărată fără ipoteze.
+
+	Pentru a doua, dacă un model satisface \( \Delta \), atunci satisface automat și submulțimea \( \Gamma \). Deci putem aplica \( \Gamma \models \psi \).
+
+	Pentru a treia, orice model al lui \( \Gamma \) satisface toate formulele din \( \Delta \), iar orice model al lui \( \Delta \) satisface \( \psi \). Deci orice model al lui \( \Gamma \) satisface \( \psi \).
+\end{proof}
+
+\begin{note}
+	Consecința semantică este despre toate modelele posibile. Când vrem să arătăm că
+	\[
+		\Gamma \not\models \varphi,
+	\]
+	nu trebuie să verificăm toate structurile. Este suficient să găsim un singur contraexemplu: o structură și o evaluare care satisfac \( \Gamma \), dar nu satisfac \( \varphi \).
+\end{note}
+
+\begin{ex}
+	În limbajul cu o relație binară \(R\), fie
+	\[
+		\Gamma = \{\forall x \exists y R(x,y)\}.
+	\]
+
+	Decideți dacă
+	\[
+		\Gamma \models \exists y \forall x R(x,y).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Nu.
+
+	Construim un contraexemplu. Luăm
+	\[
+		A=\{0,1\}, \qquad R^\mathcal{A}=\{(0,0),(1,1)\}.
+	\]
+
+	Atunci \( \forall x \exists y R(x,y) \) este adevărată: pentru \(x=0\) alegem \(y=0\), iar pentru \(x=1\) alegem \(y=1\).
+
+	Dar \( \exists y \forall x R(x,y) \) este falsă. Dacă alegem \(y=0\), nu avem \(R(1,0)\). Dacă alegem \(y=1\), nu avem \(R(0,1)\).
+\end{solutie}
+
+\section{Tautologii în logica de ordin I}
+
+În logica propozițională, o tautologie este o formulă adevărată pentru orice evaluare a variabilelor propoziționale.
+
+În logica de ordin I nu mai avem doar variabile propoziționale. Avem formule atomice precum \(x=y\), \(R(x,f(y))\), \(P(c)\), apoi formule construite cu \( \neg \), \( \to \), cuantificatori etc.
+
+Totuși, putem privi temporar fiecare formulă atomică sau cuantificată ca pe o piesă propozițională, ignorând sensul intern al termenilor și cuantificatorilor. Aceasta dă noțiunea de tautologie în \(L\).
+
+\begin{definition}
+	O \textbf{\(L\)-evaluare de adevăr} este o funcție
+	\[
+		F : Form_L \to \{0,1\}
+	\]
+	care respectă conectorii propoziționali:
+	\[
+		F(\neg \varphi)= \neg F(\varphi) = 1-F(\varphi),
+	\]
+	și
+	\[
+		F(\varphi \to \psi)=F(\varphi)\to F(\psi).
+	\]
+\end{definition}
+
+
+\begin{eg}
+	Formula
+	\[
+		\varphi \to (\psi \to \varphi)
+	\]
+	este tautologie, indiferent dacă \( \varphi \) și \( \psi \) sunt formule atomice sau formule complicate de ordin I.
+
+	De exemplu,
+	\[
+		P(a) \to ((\forall x Q(x)) \to P(a))
+	\]
+	este tautologie.
+\end{eg}
+
+\begin{definition}
+	O formulă \( \varphi \) este \textbf{tautologie} dacă
+	\[
+		F(\varphi)=1
+	\]
+	pentru orice \(L\)-evaluare de adevăr \(F\).
+
+	Notăm:
+	\[
+		\models_{\mathrm{taut}} \varphi.
+	\]
+\end{definition}
+
+\begin{prop}
+	Orice tautologie este validă:
+	\[
+		\models_{\mathrm{taut}} \varphi
+		\implies
+		\models \varphi.
+	\]
+\end{prop}
+
+\begin{note}
+	Reciproca nu este adevărată. Formula
+	\[
+		x=x
+	\]
+	este validă, pentru că orice obiect este egal cu el însuși. Dar nu este tautologie.
+\end{note}
+
+\begin{definition}
+	Formula \( \varphi \) este \textbf{consecință tautologică} a lui \( \Gamma \), notat
+	\[
+		\Gamma \models_{\mathrm{taut}} \varphi,
+	\]
+	dacă pentru orice \(L\)-evaluare de adevăr \(F\),
+	\[
+		F(\gamma)=1 \text{ pentru orice } \gamma \in \Gamma
+		\implies
+		F(\varphi)=1.
+	\]
+\end{definition}
+
+\begin{definition}
+	Două formule \( \varphi \) și \( \psi \) sunt \textbf{tautologic echivalente} dacă
+	\[
+		F(\varphi)=F(\psi)
+	\]
+	pentru orice \(L\)-evaluare de adevăr \(F\). Notăm:
+	\[
+		\varphi \sim_{\mathrm{taut}} \psi.
+	\]
+\end{definition}
+
+\begin{prop}
+	Avem următoarele rescrieri:
+	\[
+		\varphi \models_{\mathrm{taut}} \psi
+		\quad \text{ddacă} \quad
+		\models_{\mathrm{taut}} \varphi \to \psi,
+	\]
+	și
+	\[
+		\varphi \sim_{\mathrm{taut}} \psi
+		\quad \text{ddacă} \quad
+		\models_{\mathrm{taut}} \varphi \leftrightarrow \psi.
+	\]
+\end{prop}
+
+\begin{prop}
+	Dacă
+	\[
+		\Gamma \models_{\mathrm{taut}} \varphi,
+	\]
+	atunci
+	\[
+		\Gamma \models \varphi.
+	\]
+\end{prop}
+
+Cu alte cuvinte, raționamentele propoziționale rămân corecte în logica de ordin I. Dar ele nu surprind tot adevărul de ordin I: cuantificatorii și egalitatea aduc informație suplimentară.
+
+\begin{eg}
+	Formula
+	\[
+		\forall x P(x) \to P(c)
+	\]
+	este validă, dar nu este tautologie.
+
+	Este validă deoarece, dacă \(P\) este adevărat pentru toate elementele, atunci este adevărat și pentru elementul interpretat de constanta \(c\).
+
+	Nu este tautologie deoarece o evaluare de adevăr \(F\) poate pune
+	\[
+		F(\forall x P(x))=1
+		\quad \text{și} \quad
+		F(P(c))=0.
+	\]
+	O astfel de evaluare nu vine dintr-o structură, dar este permisă în definiția tautologiei.
+\end{eg}
+
+\section{Variabile libere și variabile legate}
+
+Cuantificatorii nu leagă toate aparițiile unei variabile dintr-o formulă, ci doar aparițiile aflate în "raza" lor.
+
+\begin{eg}
+	În formula
+	\[
+		\forall x(P(x) \to R(x,y)) \to R(x,z),
+	\]
+	aparițiile lui \(x\) din \(P(x)\) și \(R(x,y)\) sunt legate de \( \forall x \).
+
+	Dar apariția lui \(x\) din \(R(x,z)\) este liberă, pentru că este în afara cuantificatorului.
+
+	Deci aceeași variabilă poate apărea și legată, și liberă în aceeași formulă.
+\end{eg}
+
+\begin{definition}
+	O apariție a variabilei \(x\) într-o formulă este \textbf{legată} dacă se află în "raza" unui cuantificator \( \forall x \) sau \( \exists x \).
+
+	O apariție a lui \(x\) este \textbf{liberă} dacă nu este legată.
+\end{definition}
+
+Notația standard pentru mulțimea variabilelor libere ale lui \( \varphi \) este:
+
+\[
+	FV(\varphi).
+\]
+
+\newpage
+
+\begin{definition}
+	Mulțimea variabilelor libere se definește recursiv astfel:
+	\begin{align*}
+		FV(t_1=t_2)           & = Var(t_1) \cup Var(t_2),             \\
+		FV(R(t_1,\dots,t_n))  & = Var(t_1) \cup \cdots \cup Var(t_n), \\
+		FV(\neg \varphi)      & = FV(\varphi),                        \\
+		FV(\varphi \to \psi)  & = FV(\varphi) \cup FV(\psi),          \\
+		FV(\forall x \varphi) & = FV(\varphi)\setminus \{x\}.
+	\end{align*}
+	Pentru \( \exists x \varphi \) avem analog:
+	\[
+		FV(\exists x \varphi)=FV(\varphi)\setminus \{x\}.
+	\]
+\end{definition}
+
+\begin{ex}
+	Scrieți variabilele libere ale formulei
+	\[
+		\varphi := \forall x(R(x,y) \to \exists y S(y,z)) \to R(x,z).
+	\]
+\end{ex}
+
+\begin{solutie}
+	În prima parte,
+	\[
+		\forall x(R(x,y) \to \exists y S(y,z)),
+	\]
+	cuantificatorul \( \forall x \) leagă apariția lui \(x\) din \(R(x,y)\). Variabila \(y\) din \(R(x,y)\) rămâne liberă.
+
+	În \( \exists y S(y,z) \), apariția lui \(y\) este legată, iar \(z\) rămâne liber.
+
+	Deci prima parte are variabile libere \(y,z\).
+
+	A doua parte, \(R(x,z)\), are variabile libere \(x,z\).
+
+	Prin urmare:
+	\[
+		FV(\varphi)=\{x,y,z\}.
+	\]
+\end{solutie}
+
+\section{Adevărul depinde doar de variabilele libere}
+
+Următoarea idee este foarte importantă: dacă o variabilă nu apare liber într-o formulă, valoarea ei inițială în evaluare nu contează.
+
+\begin{prop}
+	Fie \( \mathcal{A} \) o structură și \(e_1,e_2 : V \to A\) două evaluări.
+
+	Dacă
+	\[
+		e_1(v)=e_2(v)
+		\quad \text{pentru orice } v \in Var(t),
+	\]
+	atunci
+	\[
+		t^\mathcal{A}(e_1)=t^\mathcal{A}(e_2).
+	\]
+\end{prop}
+
+Termenul folosește doar variabilele care chiar apar în el. Dacă \(t=f(x,c)\), atunci nu contează ce valori primesc \(y,z,w\).
+
+\begin{prop}
+	Fie \( \mathcal{A} \) o structură și \(e_1,e_2 : V \to A\) două evaluări.
+
+	Dacă
+	\[
+		e_1(v)=e_2(v)
+		\quad \text{pentru orice } v \in FV(\varphi),
+	\]
+	atunci
+	\[
+		\mathcal{A} \models \varphi[e_1]
+		\quad \text{ddacă} \quad
+		\mathcal{A} \models \varphi[e_2].
+	\]
+\end{prop}
+
+\begin{eg}
+	Fie
+	\[
+		\varphi := P(x) \land \forall y R(y,z).
+	\]
+	Atunci
+	\[
+		FV(\varphi)=\{x,z\}.
+	\]
+
+	Adevărul formulei depinde de valorile lui \(x\) și \(z\). Nu depinde de valoarea inițială a lui \(y\), pentru că \(y\) este rescris de cuantificator.
+
+	De exemplu, dacă două evaluări au aceleași valori pe \(x\) și \(z\), dar valori diferite pe \(y\), formula are aceeași valoare de adevăr sub cele două evaluări.
+\end{eg}
+
+\section{Enunțuri}
+
+O formulă fără variabile libere nu are nevoie de o evaluare ca să aibă sens.
+
+\begin{definition}
+	O formulă \( \varphi \) se numește \textbf{enunț} dacă
+	\[
+		FV(\varphi)=\emptyset.
+	\]
+	Mulțimea enunțurilor limbajului \(L\) se notează \(Sent_L\).
+\end{definition}
+
+\begin{eg}
+	Formula
+	\[
+		P(x) \to \exists y R(x,y)
+	\]
+	nu este enunț, pentru că \(x\) este liberă.
+
+	Formula
+	\[
+		\forall x(P(x) \to \exists y R(x,y))
+	\]
+	este enunț. Toate variabilele ei sunt legate.
+\end{eg}
+
+\begin{prop}
+	Dacă \( \varphi \) este enunț, atunci pentru orice două evaluări \(e_1,e_2 : V \to A\),
+	\[
+		\mathcal{A} \models \varphi[e_1]
+		\quad \text{ddacă} \quad
+		\mathcal{A} \models \varphi[e_2].
+	\]
+\end{prop}
+
+Aceasta este doar propoziția anterioară aplicată cu \(FV(\varphi)=\emptyset\). Nu există nicio variabilă liberă pe care evaluările trebuie să coincidă.
+
+\begin{definition}
+	Dacă \( \varphi \) este enunț, scriem
+	\[
+		\mathcal{A} \models \varphi
+	\]
+	în loc de \( \mathcal{A} \models \varphi[e] \), deoarece alegerea lui \(e\) nu contează.
+\end{definition}
+
+
+\begin{prop}
+	Pentru orice enunțuri \( \varphi,\psi \):
+	\begin{enumerate}
+		\item \( \mathcal{A} \models \neg \varphi \) ddacă \( \mathcal{A} \not\models \varphi \);
+		\item \( \mathcal{A} \models \varphi \to \psi \) ddacă \( \mathcal{A} \not\models \varphi \) sau \( \mathcal{A} \models \psi \);
+		\item \( \mathcal{A} \models \varphi \land \psi \) ddacă \( \mathcal{A} \models \varphi \) și \( \mathcal{A} \models \psi \);
+		\item \( \mathcal{A} \models \varphi \lor \psi \) ddacă \( \mathcal{A} \models \varphi \) sau \( \mathcal{A} \models \psi \);
+		\item \( \mathcal{A} \models \varphi \leftrightarrow \psi \) ddacă \( \mathcal{A} \models \varphi \) ddacă \( \mathcal{A} \models \psi \).
+	\end{enumerate}
+\end{prop}
+
+\begin{note}
+	De exemplu,
+	\[
+		\mathcal{A} \models \varphi_1 \land \cdots \land \varphi_n
+	\]
+	înseamnă că \( \mathcal{A} \models \varphi_i \) pentru fiecare \(i\). Pentru disjuncție este suficient ca măcar una dintre formule să fie adevărată în \( \mathcal{A} \).
+\end{note}
+
+\begin{definition}
+	Fie \( \Gamma \) o mulțime de enunțuri. Spunem că structura \( \mathcal{A} \) este model al lui \( \Gamma \), notat
+	\[
+		\mathcal{A} \models \Gamma,
+	\]
+	dacă
+	\[
+		\mathcal{A} \models \gamma
+		\quad \text{pentru orice } \gamma \in \Gamma.
+	\]
+\end{definition}
+
+
+\begin{eg}
+	În limbajul grafurilor, cu relația binară \(E\), formula
+	\[
+		\forall x \exists y E(x,y)
+	\]
+	este un enunț. O structură \( \mathcal{G} \) o satisface exact când fiecare nod are cel puțin o muchie care pleacă din el.
+
+	Formula
+	\[
+		\exists y E(x,y)
+	\]
+	nu este enunț. Ea spune ceva despre nodul curent \(x\), deci are nevoie de o evaluare care să spună ce este \(x\).
+\end{eg}
+
+\section{Reguli când o variabilă nu apare liber}
+
+Dacă \(x\) nu apare liber în \( \varphi \), atunci cuantificarea după \(x\) nu adaugă informație reală.
+
+\begin{prop}
+	Dacă \(x \notin FV(\varphi)\), atunci:
+	\[
+		\varphi \sim \exists x \varphi
+		\qquad \text{și} \qquad
+		\varphi \sim \forall x \varphi.
+	\]
+\end{prop}
+
+\begin{note}
+	Această regulă folosește faptul că universurile structurilor sunt nevide. Dacă am permite universul gol, partea cu \( \exists x \varphi \) ar deveni problematică.
+\end{note}
+
+Regula este utilă mai ales când vrem să mutăm cuantificatori peste conectori.
+
+\begin{prop}
+	Fie \(x \notin FV(\varphi)\). Atunci avem următoarele echivalențe:
+	\[
+		\forall x(\varphi \land \psi) \sim \varphi \land \forall x\psi,
+	\]
+	\[
+		\exists x(\varphi \land \psi) \sim \varphi \land \exists x\psi,
+	\]
+	\[
+		\forall x(\varphi \lor \psi) \sim \varphi \lor \forall x\psi,
+	\]
+	\[
+		\exists x(\varphi \lor \psi) \sim \varphi \lor \exists x\psi.
+	\]
+\end{prop}
+
+Intuiția este simplă: dacă \(x\) nu apare liber în \( \varphi \), atunci \( \varphi \) este un factor constant față de cuantificarea după \(x\). Se comportă ca o propoziție fixă pe care o scoatem în fața lui \( \forall x \) sau \( \exists x \).
+
+\begin{prop}
+	Fie \(x \notin FV(\varphi)\). Atunci:
+	\[
+		\forall x(\varphi \to \psi) \sim \varphi \to \forall x\psi,
+	\]
+	\[
+		\exists x(\varphi \to \psi) \sim \varphi \to \exists x\psi,
+	\]
+	\[
+		\forall x(\psi \to \varphi) \sim \exists x\psi \to \varphi,
+	\]
+	\[
+		\exists x(\psi \to \varphi) \sim \forall x\psi \to \varphi.
+	\]
+\end{prop}
+
+\begin{eg}
+	Să citim ultima echivalență:
+	\[
+		\exists x(\psi(x) \to \varphi) \sim \forall x\psi(x) \to \varphi,
+	\]
+	unde \(x\) nu apare liber în \( \varphi \).
+
+	Dacă \( \varphi \) este adevărată, ambele formule sunt automat adevărate.
+
+	Dacă \( \varphi \) este falsă, atunci \( \psi(x) \to \varphi \) devine \( \neg \psi(x) \). Deci stânga spune că există un \(x\) pentru care \( \psi(x) \) este falsă, adică exact că nu toate \(x\)-urile satisfac \( \psi \). Asta este echivalent cu dreapta:
+	\[
+		\forall x\psi(x) \to \varphi.
+	\]
+\end{eg}
+
+\section{Substituția în termeni}
+
+În termeni, substituția este exact ce ne așteptăm să fie.
+
+\begin{definition}
+	Fie \(x\) o variabilă, \(u\) un termen și \(t\) un termen. Notăm prin
+	\[
+		t_x(u)
+	\]
+	termenul obținut din \(t\) prin înlocuirea tuturor aparițiilor lui \(x\) cu \(u\).
+\end{definition}
+
+\begin{eg}
+	Dacă
+	\[
+		t = f(x,g(y,x))
+		\quad \text{și} \quad
+		u = h(z),
+	\]
+	atunci
+	\[
+		t_x(u)=f(h(z),g(y,h(z))).
+	\]
+\end{eg}
+
+\begin{prop}
+	Pentru orice termen \(t\), expresia \(t_x(u)\) este tot termen.
+\end{prop}
+
+
+\section{Substituția în formule}
+
+Pentru formule am vrea să facem același lucru: \( \varphi_x(u) \) ar trebui să fie formula obținută prin înlocuirea aparițiilor libere ale lui \(x\) cu termenul \(u\).
+
+Dar aici apare o problemă nouă: termenul \(u\) poate conține variabile, iar acele variabile pot ajunge sub cuantificatori care nu erau meniți să le lege.
+
+\begin{eg}
+	Fie
+	\[
+		\varphi := \exists y \neg(x=y)
+	\]
+	și vrem să înlocuim \(x\) cu \(y\).
+
+	Dacă facem substituția naiv, obținem:
+	\[
+		\varphi_x(y)=\exists y \neg(y=y).
+	\]
+
+	Această formulă este nesatisfiabilă, pentru că \(y=y\) este întotdeauna adevărat.
+
+	Dar formula inițială nu era absurdă. Într-o structură cu cel puțin două elemente,
+	\[
+		\forall x \exists y \neg(x=y)
+	\]
+	este adevărată: pentru orice \(x\), putem alege un \(y\) diferit.
+
+	Problema este că \(y\)-ul introdus prin substituție a fost "prins" de cuantificatorul \( \exists y \).
+\end{eg}
+
+\begin{note}
+	Intenția substituției \(x := y\) era să obținem:
+	\[
+		\exists z \neg(y=z),
+	\]
+	adică "există ceva diferit de \(y\)". Pentru asta trebuie mai întâi să redenumim variabila legată \(y\) în \(z\).
+\end{note}
+
+\begin{definition}
+	Fie \(x\) o variabilă, \(u\) un termen și \( \varphi \) o formulă.
+
+	Spunem că \(x\) este \textbf{liberă pentru \(u\) în \( \varphi \)} sau că \(u\) este \textbf{substituibil pentru \(x\) în \( \varphi \)} dacă nicio variabilă care apare în \(u\) nu devine legată atunci când înlocuim aparițiile libere ale lui \(x\) din \( \varphi \) cu \(u\).
+\end{definition}
+
+Mai explicit: dacă o variabilă \(y\) apare în \(u\), atunci nu trebuie să existe în \( \varphi \) un cuantificator după \(y\) a cărui rază conține apariții libere ale lui \(x\).
+
+\begin{note}
+	Substituția este automat sigură în următoarele cazuri:
+	\begin{itemize}
+		\item \(u\) este termen închis, adică nu conține variabile;
+		\item variabilele din \(u\) nu apar legate în \( \varphi \);
+		\item \(x\) nu apare liber în \( \varphi \);
+		\item \( \varphi \) nu conține cuantificatori pe variabilele care apar în \(u\).
+	\end{itemize}
+\end{note}
+
+\begin{definition}
+	Dacă \(u\) este substituibil pentru \(x\) în \( \varphi \), atunci notăm prin
+	\[
+		\varphi_x(u)
+	\]
+	formula obținută prin înlocuirea tuturor aparițiilor libere ale lui \(x\) cu \(u\).
+
+	O astfel de substituție se numește \textbf{substituție liberă}.
+\end{definition}
+
+\begin{prop}
+	Dacă \(u\) este substituibil pentru \(x\) în \( \varphi \), atunci \( \varphi_x(u) \) este formulă a limbajului.
+\end{prop}
+
+\begin{ex}
+	Spuneți unde substituția \(x := u\) este liberă:
+	\begin{enumerate}
+		\item \( \varphi_1 := \forall y R(x,y) \), \(u := f(y)\);
+		\item \( \varphi_2 := \forall z R(x,z) \), \(u := f(y)\);
+		\item \( \varphi_3 := P(x) \to \exists y Q(y) \), \(u := y\);
+		\item \( \varphi_4 := \exists x R(x,y) \), \(u := z\).
+	\end{enumerate}
+\end{ex}
+
+\begin{solutie}
+	\noindent
+	\begin{enumerate}
+		\item Nu este liberă. Termenul \(f(y)\) conține variabila \(y\), iar în formula \( \forall y R(x,y) \), cuantificatorul \( \forall y \) are în rază apariția liberă a lui \(x\). După substituție am obține \( \forall y R(f(y),y) \), unde \(y\)-ul din \(f(y)\) a fost legat.
+
+		\item Este liberă. Cuantificatorul este după \(z\), nu după \(y\). Obținem:
+		      \[
+			      \forall z R(f(y),z).
+		      \]
+
+		\item Este liberă. Apariția liberă a lui \(x\) este în \(P(x)\), în afara lui \( \exists y \). Obținem:
+		      \[
+			      P(y) \to \exists y Q(y).
+		      \]
+		      Este permis ca același nume \(y\) să apară liber într-o parte și legat în alta. Important este să nu legăm \(y\)-ul introdus.
+
+		\item Este liberă, dar nu schimbă formula. În \( \exists x R(x,y) \), apariția lui \(x\) este legată, deci nu există apariții libere ale lui \(x\) de înlocuit:
+		      \[
+			      (\exists x R(x,y))_x(z)=\exists x R(x,y).
+		      \]
+	\end{enumerate}
+\end{solutie}
+
+\section{Reguli semantice pentru substituție}
+
+\begin{prop}
+	Fie \( \varphi \) o formulă, \(x\) o variabilă și \(u\) un termen substituibil pentru \(x\) în \( \varphi \). Atunci:
+	\[
+		\models \forall x\varphi \to \varphi_x(u),
+	\]
+	și
+	\[
+		\models \varphi_x(u) \to \exists x\varphi.
+	\]
+\end{prop}
+
+\begin{note}
+	Prima formulă este regula de \textbf{instanțiere universală}: dacă \( \varphi \) este adevărată pentru toate valorile lui \(x\), atunci este adevărată și pentru obiectul desemnat de termenul \(u\).
+
+	A doua formulă este regula de \textbf{generalizare existențială}: dacă \( \varphi \) este adevărată pentru termenul \(u\), atunci există un \(x\) pentru care \( \varphi \) este adevărată.
+\end{note}
+
+\begin{eg}
+	Din
+	\[
+		\forall x(P(x) \to Q(x))
+	\]
+	putem obține
+	\[
+		P(f(y)) \to Q(f(y)),
+	\]
+	pentru că termenul \(f(y)\) este substituibil pentru \(x\) în \(P(x)\to Q(x)\).
+
+	În schimb, din
+	\[
+		\forall x \exists y R(x,y)
+	\]
+	nu obținem prin substituția \(x:=y\) formula
+	\[
+		\exists y R(y,y).
+	\]
+	Aceasta ar lega variabila \(y\). Corect este să redenumim mai întâi variabila legată:
+	\[
+		\forall x \exists z R(x,z),
+	\]
+	iar apoi putem substitui \(x:=y\):
+	\[
+		\exists z R(y,z).
+	\]
+\end{eg}
+
+\begin{prop}
+	Fie \(u_1,u_2\) termeni și \(x\) o variabilă.
+	\begin{enumerate}
+		\item Pentru orice termen \(t\),
+		      \[
+			      \models u_1=u_2 \to t_x(u_1)=t_x(u_2).
+		      \]
+		\item Pentru orice formulă \( \varphi \), dacă \(u_1\) și \(u_2\) sunt substituibili pentru \(x\) în \( \varphi \), atunci
+		      \[
+			      \models u_1=u_2 \to \big(\varphi_x(u_1) \leftrightarrow \varphi_x(u_2)\big).
+		      \]
+	\end{enumerate}
+\end{prop}
+
+
+\begin{ex}
+	În limbajul aritmeticii, presupunem că avem funcția \(+\) și relația \(<\). Explicați de ce următorul raționament este valid:
+	\[
+		x = y \models x+1 < z \leftrightarrow y+1 < z.
+	\]
+\end{ex}
+
+\begin{solutie}
+	Luăm termenul
+	\[
+		t := x+1.
+	\]
+	Dacă \(x=y\), atunci termenii \(x+1\) și \(y+1\) desemnează același obiect. Relația \(<\) aplicată la obiecte egale pe prima poziție are aceeași valoare de adevăr.
+
+	Formal, este un caz al regulii:
+	\[
+		\models u_1=u_2 \to (\varphi_x(u_1) \leftrightarrow \varphi_x(u_2)),
+	\]
+	cu \(u_1=x\), \(u_2=y\) și \( \varphi := x+1<z \).
+\end{solutie}
+
+\section{Redenumirea variabilelor legate}
+
+\begin{prop}
+	Fie \(x\) și \(y\) variabile distincte, iar \(y\) să nu apară în \( \varphi \). Atunci:
+	\[
+		\exists x \varphi \models \exists y \varphi_x(y),
+	\]
+	și
+	\[
+		\forall x \varphi \models \forall y \varphi_x(y).
+	\]
+\end{prop}
+
+Practic, dacă \(y\) este un nume complet nou, putem redenumi variabila legată \(x\) în \(y\).
+
+\begin{eg}
+	Formulele
+	\[
+		\forall x(P(x) \to Q(x))
+	\]
+	și
+	\[
+		\forall y(P(y) \to Q(y))
+	\]
+	spun același lucru. Numele variabilei legate nu contează.
+\end{eg}
+
+\begin{eg}
+	Revenim la exemplul problematic:
+	\[
+		\varphi := \exists y \neg(x=y).
+	\]
+	Vrem să substituim \(x:=y\), dar nu putem direct.
+
+	Redenumim mai întâi variabila legată \(y\) într-o variabilă nouă \(z\):
+	\[
+		\exists z \neg(x=z).
+	\]
+	Acum substituția este liberă:
+	\[
+		(\exists z \neg(x=z))_x(y)=\exists z \neg(y=z).
+	\]
+
+	Aceasta este formula cu sensul corect.
+\end{eg}
+
+\begin{definition}
+	Fie \( \varphi \) o formulă și \(y_1,\dots,y_k\) variabile.
+	O \textbf{variantă liberă} față de \(y_1,\dots,y_k\) este o formulă obținută din \( \varphi \) prin redenumirea variabilelor legate astfel încât niciuna dintre variabilele \(y_1,\dots,y_k\) să nu mai apară ca variabilă legată.
+\end{definition}
+
+Formal, această variantă se construiește recursiv: formulele atomice rămân la fel, negația și implicația se tratează pe subformule, iar când întâlnim un cuantificator
+\[
+	\forall z \psi
+\]
+cu \(z\) printre variabilele interzise, îl redenumim într-o variabilă proaspătă \(w\), aleasă astfel încât să nu apară deja în formulă și să nu fie printre variabilele interzise.
+
+\begin{note}
+	Această construcție este doar o procedură riguroasă pentru o idee simplă: înainte să substituim un termen care conține variabile, curățăm formula de cuantificatori care ar putea lega acele variabile.
+\end{note}
+
+\begin{ex}
+	Găsiți o variantă \(y\)-liberă pentru formula
+	\[
+		\forall y(R(x,y) \to \exists z S(y,z)).
+	\]
+	Apoi substituiți \(x:=y\).
+\end{ex}
+
+\begin{solutie}
+	Variabila \(y\) apare legată de cuantificatorul exterior. Pentru a face formula \(y\)-liberă, redenumim acel \(y\) într-o variabilă nouă, de exemplu \(w\):
+	\[
+		\forall w(R(x,w) \to \exists z S(w,z)).
+	\]
+
+	Acum substituția \(x:=y\) este sigură:
+	\[
+		\forall w(R(y,w) \to \exists z S(w,z)).
+	\]
+
+	Observați că \(y\)-ul introdus rămâne liber, exact cum trebuie. Nu este prins de niciun cuantificator.
+\end{solutie}
