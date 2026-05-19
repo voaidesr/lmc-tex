@@ -1,0 +1,634 @@
+\chapter{Forme normale prenex și Skolem}
+
+\section{Variante ale unei formule}
+
+Reamintim ideea de la finalul lecției trecute: variabilele legate sunt nume locale. Dacă redenumim o variabilă legată într-o variabilă proaspătă, sensul formulei nu se schimbă.
+
+\begin{definition}
+	O formulă \( \varphi' \) este o \textbf{variantă} a lui \( \varphi \) dacă se obține din \( \varphi \) prin redenumirea unor variabile legate, fără să apară capturi de variabile.
+\end{definition}
+
+\begin{eg}
+	Formulele
+	\[
+		\forall x(P(x) \to Q(x))
+	\]
+	și
+	\[
+		\forall y(P(y) \to Q(y))
+	\]
+	sunt variante una a celeilalte. Ele spun același lucru: orice obiect care are proprietatea \(P\) are și proprietatea \(Q\).
+\end{eg}
+
+\begin{prop}
+	Dacă \( \varphi' \) este o variantă a lui \( \varphi \), atunci
+	\[
+		\varphi \sim \varphi'.
+	\]
+\end{prop}
+
+\begin{eg}
+	Formula
+	\[
+		(\exists x P(x)) \land (\forall x Q(x))
+	\]
+	are două cuantificări diferite care folosesc același nume \(x\). Acest lucru nu este greșit, dar este incomod.
+
+	O variantă mai bună este
+	\[
+		(\exists x P(x)) \land (\forall y Q(y)).
+	\]
+
+	Acum este clar că \(x\)-ul din prima parte și \(y\)-ul din a doua parte sunt independente.
+\end{eg}
+
+\begin{prop}
+	Fie \(t\) un termen, iar variabilele lui \(t\) să fie printre \(y_1,\dots,y_k\). Dacă \( \varphi' \) este o variantă liberă față de \(y_1,\dots,y_k\), atunci substituția
+	\[
+		\varphi'_x(t)
+	\]
+	este liberă.
+\end{prop}
+
+Practic, dacă vrem să substituim un termen cu variabile printre
+\(y_1,\dots,y_k\), redenumim mai întâi variabilele legate care le-ar putea captura.
+
+\section{Formule libere de cuantificatori}
+
+\begin{definition}
+	O formulă este \textbf{liberă de cuantificatori} dacă nu conține niciun cuantificator \( \forall \) sau \( \exists \).
+\end{definition}
+
+\begin{eg}
+	Formula
+	\[
+		R(x,y) \land \neg P(f(x))
+	\]
+	este liberă de cuantificatori.
+
+	Formula
+	\[
+		\forall x(R(x,y) \to P(x))
+	\]
+	nu este liberă de cuantificatori, pentru că are \( \forall x \).
+\end{eg}
+
+Formulele libere de cuantificatori sunt partea ``propozițională'' a logicii de ordin I. Ele pot avea termeni, relații și egalități, dar nu mai au instrucțiuni de tipul ``pentru orice'' sau ``există''.
+
+\section{Forma normală prenex}
+
+\begin{definition}
+	O formulă \( \varphi \) este în \textbf{formă normală prenex} dacă are forma
+	\[
+		\varphi = Q_1x_1 Q_2x_2 \cdots Q_nx_n \; \psi,
+	\]
+	unde:
+	\begin{itemize}
+		\item fiecare \(Q_i\) este \( \forall \) sau \( \exists \);
+		\item \(x_1,\dots,x_n\) sunt variabile;
+		\item \( \psi \) este liberă de cuantificatori.
+	\end{itemize}
+
+	Formula \( \psi \) se numește \textbf{matricea} formulei, iar
+	\[
+		Q_1x_1 Q_2x_2 \cdots Q_nx_n
+	\]
+	se numește \textbf{prefixul}.
+\end{definition}
+
+\begin{eg}
+	Formula
+	\[
+		\forall x \exists y \forall z \big(R(x,y) \to S(z)\big)
+	\]
+	este în formă normală prenex.
+
+	Prefixul este
+	\[
+		\forall x \exists y \forall z,
+	\]
+	iar matricea este
+	\[
+		R(x,y) \to S(z).
+	\]
+\end{eg}
+
+\begin{note}
+	Formulele libere de cuantificatori sunt deja în formă prenex, cu prefixul vid. De exemplu, \(P(x)\land Q(y)\) este prenex.
+\end{note}
+
+\begin{eg}
+	Formulele universale
+	\[
+		\forall x_1 \forall x_2 \cdots \forall x_n \psi
+	\]
+	și formulele existențiale
+	\[
+		\exists x_1 \exists x_2 \cdots \exists x_n \psi
+	\]
+	sunt cazuri particulare de formule prenex, dacă \( \psi \) este liberă de cuantificatori.
+\end{eg}
+
+\begin{theorem}
+	Pentru orice formulă \( \varphi \), există o formulă \( \varphi^* \) în formă normală prenex astfel încât
+	\[
+		\varphi \sim \varphi^*
+	\]
+	și
+	\[
+		FV(\varphi)=FV(\varphi^*).
+	\]
+\end{theorem}
+
+\begin{note}
+	Forma prenex nu este unică. Putem obține forme diferite, în funcție de ordinea în care mutăm cuantificatorii și de numele alese pentru variabilele legate. Important este ca formula finală să fie echivalentă logic cu formula inițială.
+\end{note}
+
+\section{Cum aducem o formulă în formă prenex}
+
+\begin{note}
+	Pașii sunt:
+	\begin{enumerate}
+		\item redenumim variabilele legate ca să evităm conflictele;
+		\item împingem negațiile peste cuantificatori:
+		      \[
+			      \neg \forall x\varphi \sim \exists x\neg\varphi,
+			      \qquad
+			      \neg \exists x\varphi \sim \forall x\neg\varphi;
+		      \]
+		\item mutăm cuantificatorii spre exterior folosind regulile în care variabila cuantificată nu apare liber în cealaltă parte;
+		\item repetăm până când toți cuantificatorii sunt în față.
+	\end{enumerate}
+\end{note}
+
+Regulile cele mai folosite sunt:
+\[
+	(Qx\varphi) \land \psi \sim Qx(\varphi \land \psi),
+\]
+\[
+	(Qx\varphi) \lor \psi \sim Qx(\varphi \lor \psi),
+\]
+dacă \(x \notin FV(\psi)\), unde \(Q\) este \( \forall \) sau \( \exists \).
+
+Pentru implicație trebuie să fim mai atenți, pentru că antecedentul schimbă cuantificatorul după rescrierea cu negație:
+\[
+	(\forall x\varphi) \to \psi \sim \exists x(\varphi \to \psi),
+\]
+\[
+	(\exists x\varphi) \to \psi \sim \forall x(\varphi \to \psi),
+\]
+dacă \(x \notin FV(\psi)\).
+
+În concluzie, pentru implicații, cel mai sigur este să transformăm
+\[
+	\alpha \to \beta
+\]
+în
+\[
+	\neg \alpha \lor \beta
+\]
+și apoi să mutăm negațiile și cuantificatorii.
+
+\begin{eg}
+	Găsim o formă prenex pentru
+	\[
+		\varphi := \exists y(g(y,z)=c) \land \neg\exists x(f(x)=d).
+	\]
+
+	Mutăm negația peste existențial:
+	\[
+		\neg\exists x(f(x)=d)
+		\sim
+		\forall x\neg(f(x)=d).
+	\]
+
+	Deci
+	\[
+		\varphi
+		\sim
+		\exists y(g(y,z)=c) \land \forall x\neg(f(x)=d).
+	\]
+
+	Acum scoatem cuantificatorii în față:
+	\[
+		\varphi
+		\sim
+		\exists y \forall x\big(g(y,z)=c \land \neg(f(x)=d)\big).
+	\]
+
+	Prin urmare, o formă normală prenex este
+	\[
+		\varphi^* :=
+		\exists y \forall x\big(g(y,z)=c \land \neg(f(x)=d)\big).
+	\]
+\end{eg}
+
+\begin{eg}
+	Găsim o formă prenex pentru
+	\[
+		\varphi := (\exists xP(x)) \land (\forall xQ(x)).
+	\]
+
+	Mai întâi redenumim al doilea \(x\):
+	\[
+		\varphi \sim (\exists xP(x)) \land (\forall yQ(y)).
+	\]
+
+	Acum mutăm cuantificatorii în față:
+	\[
+		(\exists xP(x)) \land (\forall yQ(y))
+		\sim
+		\exists x(P(x) \land \forall yQ(y))
+	\]
+	și apoi
+	\[
+		\sim
+		\exists x\forall y(P(x)\land Q(y)).
+	\]
+
+	O formă prenex este:
+	\[
+		\exists x\forall y(P(x)\land Q(y)).
+	\]
+\end{eg}
+
+\begin{eg}
+	Găsim o formă prenex pentru
+	\[
+		\varphi := \forall xP(x) \to \exists yQ(y).
+	\]
+
+	Rescriem implicația:
+	\[
+		\varphi \sim \neg\forall xP(x) \lor \exists yQ(y).
+	\]
+
+	Mutăm negația peste universal:
+	\[
+		\neg\forall xP(x) \sim \exists x\neg P(x).
+	\]
+
+	Deci
+	\[
+		\varphi \sim \exists x\neg P(x) \lor \exists yQ(y).
+	\]
+
+	Acum scoatem cuantificatorii:
+	\[
+		\varphi \sim \exists x\exists y(\neg P(x)\lor Q(y)).
+	\]
+\end{eg}
+
+\begin{ex}
+	Găsiți o formă normală prenex pentru
+	\[
+		\varphi := \neg\forall x(P(x)\to \exists yR(x,y)).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Mutăm negația peste universal:
+	\[
+		\neg\forall x(P(x)\to \exists yR(x,y))
+		\sim
+		\exists x\neg(P(x)\to \exists yR(x,y)).
+	\]
+
+	Rescriem negația implicației:
+	\[
+		\neg(P(x)\to \exists yR(x,y))
+		\sim
+		P(x)\land \neg\exists yR(x,y).
+	\]
+
+	Mutăm negația peste existențial:
+	\[
+		\neg\exists yR(x,y)\sim \forall y\neg R(x,y).
+	\]
+
+	Deci
+	\[
+		\varphi \sim \exists x\big(P(x)\land \forall y\neg R(x,y)\big).
+	\]
+
+	Scoatem \( \forall y \) în față:
+	\[
+		\varphi \sim \exists x\forall y(P(x)\land \neg R(x,y)).
+	\]
+\end{solutie}
+
+\begin{ex}
+	Găsiți o formă normală prenex pentru
+	\[
+		\psi := \forall x\big(P(x)\to \exists yQ(x,y)\big) \land \exists zS(z).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Formula din stânga este deja aproape prenex. Scoatem \( \exists y \) din implicație:
+	\[
+		P(x)\to \exists yQ(x,y)
+		\sim
+		\exists y(P(x)\to Q(x,y)),
+	\]
+	deoarece \(y\) nu apare liber în \(P(x)\).
+
+	Deci
+	\[
+		\psi \sim \forall x\exists y(P(x)\to Q(x,y)) \land \exists zS(z).
+	\]
+
+	Scoatem apoi cuantificatorul \( \exists z \) înaintea universalului, pentru că \(z\) nu apare în partea din stânga:
+	\[
+		\psi \sim \exists z\forall x\exists y\big((P(x)\to Q(x,y)) \land S(z)\big).
+	\]
+\end{solutie}
+
+\section{Forma normală Skolem}
+
+Forma prenex pune cuantificatorii în față. Skolemizarea merge mai departe: elimină cuantificatorii existențiali.
+
+\begin{note}
+	Skolemizarea se aplică enunțurilor în formă prenex. De obicei, întâi transformăm formula într-un enunț prenex, apoi o skolemizăm.
+\end{note}
+
+\begin{definition}
+	Fie \( \varphi \) un enunț în formă prenex:
+	\[
+		\varphi = Q_1x_1Q_2x_2\cdots Q_nx_n \; \theta,
+	\]
+	unde \( \theta \) este liberă de cuantificatori.
+
+	O \textbf{formă normală Skolem} a lui \( \varphi \), notată \( \varphi^{\mathrm{Sk}} \), se obține eliminând cuantificatorii existențiali astfel:
+	\begin{itemize}
+		\item dacă \( \exists x \) nu are niciun cuantificator universal înaintea lui, înlocuim \(x\) cu o constantă nouă \(c\);
+		\item dacă \( \exists x \) apare după universalele \( \forall y_1,\dots,\forall y_k \), înlocuim \(x\) cu un termen nou
+		      \[
+			      f(y_1,\dots,y_k),
+		      \]
+		      unde \(f\) este un simbol de funcție nou, de aritate \(k\).
+	\end{itemize}
+	La final rămâne un enunț universal într-un limbaj extins.
+\end{definition}
+
+Simbolurile noi se numesc \textbf{simboluri Skolem}.
+
+\begin{eg}
+	Fie
+	\[
+		\varphi := \exists x P(x).
+	\]
+
+	Nu există universale înaintea lui \( \exists x \), deci introducem o constantă nouă \(c\):
+	\[
+		\varphi^{\mathrm{Sk}} := P(c).
+	\]
+
+	Intuitiv, dacă există un obiect cu proprietatea \(P\), numim unul dintre acele obiecte \(c\).
+\end{eg}
+
+\begin{eg}
+	Fie
+	\[
+		\varphi := \forall y \exists z P(y,z).
+	\]
+
+	Aici \(z\) poate depinde de \(y\). De aceea introducem o funcție unară nouă \(f\):
+	\[
+		\varphi^{\mathrm{Sk}} := \forall y P(y,f(y)).
+	\]
+
+	Funcția \(f\) alege, pentru fiecare \(y\), un martor \(z\) care funcționează pentru acel \(y\).
+\end{eg}
+
+\begin{eg}
+	Fie
+	\[
+		\varphi := \exists x\forall y\exists z R(x,y,z).
+	\]
+
+	Pentru \(x\), nu avem universale anterioare, deci folosim o constantă \(c\).
+
+	Pentru \(z\), universala anterioară rămasă este \(y\), deci folosim o funcție unară \(f(y)\).
+
+	Obținem:
+	\[
+		\varphi^{\mathrm{Sk}} := \forall y R(c,y,f(y)).
+	\]
+\end{eg}
+
+\begin{eg}
+	Fie
+	\[
+		\varphi := \forall y \exists z \forall u \exists v \big(R(y,z)\land f(u)=v\big).
+	\]
+
+	Pentru \(z\), universala anterioară este \(y\), deci înlocuim
+	\[
+		z := g(y),
+	\]
+	unde \(g\) este un simbol nou de funcție unară.
+
+	Obținem:
+	\[
+		\forall y\forall u\exists v \big(R(y,g(y))\land f(u)=v\big).
+	\]
+
+	Pentru \(v\), universalele anterioare sunt \(y\) și \(u\), deci înlocuim
+	\[
+		v := h(y,u),
+	\]
+	unde \(h\) este un simbol nou de funcție binară.
+
+	Forma Skolem este:
+	\[
+		\varphi^{\mathrm{Sk}}
+		:=
+		\forall y\forall u \big(R(y,g(y))\land f(u)=h(y,u)\big).
+	\]
+\end{eg}
+
+\begin{note}
+	Ordinea contează. În
+	\[
+		\forall x\exists y\forall z\exists w \; \theta(x,y,z,w),
+	\]
+	termenul pentru \(y\) este \(f(x)\), dar termenul pentru \(w\) este \(g(x,z)\), nu doar \(g(z)\). Variabila \(w\) poate depinde de toate universalele care au apărut înaintea lui: \(x\) și \(z\).
+\end{note}
+
+\begin{ex}
+	Skolemizați enunțul
+	\[
+		\varphi := \forall x\exists y\forall z\exists w \big(P(x,y)\to Q(z,w)\big).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Pentru \(y\), universala anterioară este \(x\), deci punem
+	\[
+		y := f(x).
+	\]
+
+	Formula devine
+	\[
+		\forall x\forall z\exists w \big(P(x,f(x))\to Q(z,w)\big).
+	\]
+
+	Pentru \(w\), universalele anterioare sunt \(x\) și \(z\), deci punem
+	\[
+		w := g(x,z).
+	\]
+
+	Forma Skolem este:
+	\[
+		\varphi^{\mathrm{Sk}}
+		=
+		\forall x\forall z \big(P(x,f(x))\to Q(z,g(x,z))\big).
+	\]
+\end{solutie}
+
+\begin{ex}
+	Skolemizați enunțul
+	\[
+		\psi := \exists x\forall y\exists z\forall u\exists v \; T(x,y,z,u,v).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Pentru \(x\), nu avem universale înainte, deci folosim o constantă \(c\):
+	\[
+		x := c.
+	\]
+
+	Pentru \(z\), universala anterioară este \(y\), deci folosim o funcție \(f(y)\):
+	\[
+		z := f(y).
+	\]
+
+	Pentru \(v\), universalele anterioare sunt \(y\) și \(u\), deci folosim o funcție \(g(y,u)\):
+	\[
+		v := g(y,u).
+	\]
+
+	Prin urmare:
+	\[
+		\psi^{\mathrm{Sk}}
+		=
+		\forall y\forall u \; T(c,y,f(y),u,g(y,u)).
+	\]
+\end{solutie}
+
+\section{Ce păstrează Skolemizarea}
+
+Skolemizarea nu este o simplă echivalență logică. Ea schimbă limbajul, pentru că introduce simboluri noi. Ce păstrează este satisfiabilitatea.
+
+\begin{theorem}
+	Fie \( \varphi \) un enunț în formă normală prenex și \( \varphi^{\mathrm{Sk}} \) o formă Skolem a sa.
+
+	\begin{enumerate}
+		\item În limbajul extins,
+		      \[
+			      \models \varphi^{\mathrm{Sk}} \to \varphi.
+		      \]
+		\item Formula \( \varphi \) este satisfiabilă ddacă \( \varphi^{\mathrm{Sk}} \) este satisfiabilă.
+	\end{enumerate}
+\end{theorem}
+
+\begin{note}
+	În general, \( \varphi \) și \( \varphi^{\mathrm{Sk}} \) nu sunt logic echivalente ca enunțuri în limbajul extins.
+\end{note}
+
+\begin{eg}
+	Considerăm
+	\[
+		\varphi := \forall x\exists y R(x,y).
+	\]
+
+	Forma Skolem este
+	\[
+		\varphi^{\mathrm{Sk}} := \forall x R(x,f(x)).
+	\]
+
+	Este adevărat că
+	\[
+		\varphi^{\mathrm{Sk}} \models \varphi,
+	\]
+	pentru că \(f(x)\) oferă un martor pentru fiecare \(x\).
+
+	Invers nu este valid în limbajul extins. Luăm universul \(A=\{0,1\}\) și
+	\[
+		R^\mathcal{A}=\{(0,0),(1,1)\}.
+	\]
+	Formula \( \forall x\exists y R(x,y) \) este adevărată: pentru fiecare \(x\), alegem \(y=x\).
+
+	Dar dacă interpretăm \(f\) ca funcția constantă \(0\), atunci
+	\[
+		\forall xR(x,f(x))
+	\]
+	este falsă, deoarece pentru \(x=1\) obținem \(R(1,0)\), care nu este adevărat.
+\end{eg}
+
+\begin{note}
+	De aceea Skolemizarea este folosită mai ales pentru satisfiabilitate și nesatisfiabilitate. Dacă vrem să arătăm că o formulă nu are model, putem lucra cu forma ei Skolem. Dar nu trebuie să tratăm forma Skolem ca pe o formulă logic echivalentă în toate structurile extinse.
+\end{note}
+
+\section{Dintr-o formulă oarecare la forma Skolem}
+
+În practică, când vrem să skolemizăm, procedăm așa:
+\begin{enumerate}
+	\item transformăm formula într-un enunț, dacă lucrăm cu satisfiabilitatea unui enunț;
+	\item o aducem în formă normală prenex;
+	\item redenumim variabilele legate ca să fie distincte;
+	\item eliminăm existențialele de la stânga la dreapta, introducând constante sau funcții Skolem;
+\end{enumerate}
+
+\begin{eg}
+	Skolemizăm
+	\[
+		\varphi := \neg\forall x(P(x)\to \exists yR(x,y)).
+	\]
+
+	Din exercițiul de mai sus avem forma prenex:
+	\[
+		\varphi \sim \exists x\forall y(P(x)\land \neg R(x,y)).
+	\]
+
+	Acum eliminăm \( \exists x \). Nu are universale înainte, deci folosim o constantă nouă \(c\):
+	\[
+		\varphi^{\mathrm{Sk}}
+		=
+		\forall y(P(c)\land \neg R(c,y)).
+	\]
+
+	Intuitiv, formula inițială spune că există un \(x\) care are proprietatea \(P\) și nu are niciun \(R\)-succesor. Skolemizarea numește acel \(x\) prin constanta \(c\).
+\end{eg}
+
+\begin{ex}
+	Aduceți la formă prenex și apoi skolemizați:
+	\[
+		\varphi := \forall x(P(x)\to \exists yQ(x,y)) \land \exists zS(z).
+	\]
+\end{ex}
+
+\begin{solutie}
+	Din exercițiul anterior, o formă prenex este:
+	\[
+		\exists z\forall x\exists y\big((P(x)\to Q(x,y)) \land S(z)\big).
+	\]
+
+	Pentru \(z\), nu avem universale înainte, deci folosim o constantă nouă \(c\):
+	\[
+		z := c.
+	\]
+
+	Pentru \(y\), universala anterioară este \(x\), deci punem
+	\[
+		y := f(x).
+	\]
+
+	Forma Skolem este:
+	\[
+		\forall x\big((P(x)\to Q(x,f(x))) \land S(c)\big).
+	\]
+\end{solutie}
+
